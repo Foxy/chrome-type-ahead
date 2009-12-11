@@ -1,0 +1,7 @@
+chrome-type-ahead (0.0.1) unstable; urgency=high
+
+  * First upload.
+  * Search only in links.
+  * No configuration.
+
+ --  <tokland@gmail.com>  Tue, 08 Dec 2009 19:49:02 +0100
