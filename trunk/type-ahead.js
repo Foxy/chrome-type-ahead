@@ -94,19 +94,23 @@ function processSearch(search, searchIndex, skip_blur) {
   return(selected);
 }
 
+function isInputElementActive() {
+  var name = document.activeElement.tagName;
+  return (name == "INPUT" || name == "SELECT" || name == "TEXTAREA")
+}
+
 function setKeyboardListeners() {
-  var search = "";
-  var searchIndex = 0;
-  var chars = "abcdefghijklmnopqrstuvwxyz0123456789";  
   var keycodes = {
     "backspace": 8,
     "tab": 9,
     "enter": 13,
     "escape": 27
   }
+  var search = "";
+  var searchIndex = 0;
   
   window.addEventListener('keydown', function(ev) {
-    if (document.activeElement.tagName == "INPUT")
+    if (isInputElementActive())
       return;
       
     var code = ev.keyCode;
@@ -140,8 +144,7 @@ function setKeyboardListeners() {
   }, false);
   
   window.addEventListener('keypress', function(ev) {
-    var name = document.activeElement.tagName;
-    if (name == "INPUT" ||name == "SELECT")
+    if (isInputElementActive())
       return;
       
     var code = ev.keyCode;
