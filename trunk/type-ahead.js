@@ -2,7 +2,7 @@
  chrome-type-ahead: search for links when you start typing. 
  
  Even though type-ahead-find is an extremely useful accessibility feature 
- (implemented in majors browsers like Firefox or Safari), Chrome does not 
+ (implemented in major browsers like Firefox or Safari), Chrome does not 
  plan to implement it. So, until Chromium developers come to their senses, 
  we will have it as extension.  
 
