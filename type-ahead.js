@@ -1,4 +1,11 @@
 /*
+ chrome-type-ahead: search for links when you start typing. 
+ 
+ Even though type-ahead-find is an extremely useful accessibility feature 
+ (implemented in majors browsers like Firefox or Safari), Chrome does not 
+ plan to implement it. So, until Chromium developers come to their senses, 
+ we will have it as extension.  
+
  This script is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
