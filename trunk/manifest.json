@@ -1,0 +1,14 @@
+{
+  "name": "Type-ahead-find",
+  "description": "Search for links when you start typing",
+  "version": "0.0.1",
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*", "file://*/*", "ftp://*/*"],
+      "js": ["type-ahead.js"]
+    }
+  ],
+  "icons": {
+    "48": "icon-48.png"
+  }
+}
