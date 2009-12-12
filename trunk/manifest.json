@@ -1,7 +1,7 @@
 {
   "name": "Type-ahead-find",
   "description": "Search for links when you start typing",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*", "file://*/*", "ftp://*/*"],

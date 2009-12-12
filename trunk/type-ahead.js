@@ -100,6 +100,7 @@ function setKeyboardListeners() {
     "backspace": 8,
     "tab": 9,
     "enter": 13,
+    "spacebar": 32,
     "escape": 27
   }
   var search = "";
@@ -142,17 +143,20 @@ function setKeyboardListeners() {
   window.addEventListener('keypress', function(ev) {
     if (isInputElementActive())
       return;
-      
     var code = ev.keyCode;
     var ascii = String.fromCharCode(code);
     
-    if (!ev.altKey && !ev.metaKey && !ev.controlKey && ascii) {
+    if (!ev.altKey && !ev.metaKey && !ev.controlKey && ascii && 
+        (code != keycodes.spacebar || search)) {
       var old_search = search; 
       search += ascii;
-      if (!processSearch(search, searchIndex, true)) {
+      if (!processSearch(search, searchIndex, true))
         search = old_search;
-      }        
-    }
+      if (code == keycodes.spacebar) {
+        ev.preventDefault();
+        ev.stopPropagation();
+      }
+    }        
   }, false);
 }
 
