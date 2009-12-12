@@ -14,8 +14,8 @@
  You should have received a copy of the GNU General Public License
  along with this script.  If not, see <http://www.gnu.org/licenses/>.
  
- Author: Arnau Sanchez <tokland@gmail.com> 
  Website: http://code.google.com/p/chrome-type-ahead/
+ Author: Arnau Sanchez <tokland@gmail.com> 
 */ 
 
 function getSelectedAnchor() {
@@ -26,7 +26,7 @@ function getSelectedAnchor() {
 // Refactor of http://james.padolsey.com/javascript/find-and-replace-text-with-javascript/
 function findTextRecursively(searchNode, searchText) {
   var regex = typeof searchText === 'string' ?
-              new RegExp(searchText, 'i') : searchText;
+              new RegExp(searchText, 'ig') : searchText;
   var childNodes = (searchNode || document.body).childNodes;
   var cnLength = childNodes.length;
   var excludes = 'html,head,style,title,link,meta,script,object,iframe';
@@ -39,9 +39,14 @@ function findTextRecursively(searchNode, searchText) {
       if (result)
         return result;
     }
-    if (currentNode.nodeType !== 3 || !regex.test(currentNode.data) )
-      continue;
-    return {node: currentNode, index: currentNode.data.search(regex)}
+    if (currentNode.nodeType == 3) {
+      var start = currentNode.data.search(regex);
+      if (start >= 0) {
+        regex.exec(currentNode.data);
+        var end = regex.lastIndex;
+        return {node: currentNode, start: start, end: end}
+      }
+    }
   }
 }
 
@@ -60,10 +65,10 @@ function processSearch(search, searchIndex, skip_blur) {
   if (search.length > 0) {
     var marchedAnchors = [];
     anchors = document.getElementsByTagName('a');
-    
+    var smartSearch = search.replace(/\s+/g, "(\\s|\240)+");
     for(var index = 0; index < anchors.length; index++) {
       anchor = anchors[index];
-      result = findTextRecursively(anchor, search);
+      result = findTextRecursively(anchor, smartSearch);
       if (result) {
         marchedAnchors.push(result);
       } 
@@ -77,9 +82,8 @@ function processSearch(search, searchIndex, skip_blur) {
       var selection = window.getSelection();
       selection.removeAllRanges();
       var range = document.createRange();
-      var start = marchedAnchors[index].index;
-      range.setStart(node, start);
-      range.setEnd(node, start + search.length);
+      range.setStart(node, marchedAnchors[index].start);
+      range.setEnd(node, marchedAnchors[index].end);
       selection.addRange(range);
       selected = true;
     } 
