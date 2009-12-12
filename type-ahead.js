@@ -35,7 +35,7 @@ function findTextRecursively(searchNode, searchText) {
     var currentNode = childNodes[cnLength];
     if (currentNode.nodeType === 1 &&
       (excludes + ',').indexOf(currentNode.nodeName.toLowerCase() + ',') === -1) {
-      result = arguments.callee(currentNode, searchText);
+      result = findTextRecursively(currentNode, searchText);
       if (result)
         return result;
     }
