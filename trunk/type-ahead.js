@@ -1,5 +1,5 @@
 /*
- chrome-type-ahead: search for links when you start typing. 
+ Chrome-type-ahead: search for links when you start typing. 
  
  This script is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ function getSelectedAnchor() {
 
 // Refactor of http://james.padolsey.com/javascript/find-and-replace-text-with-javascript/
 function findTextRecursively(searchNode, searchText) {
-  var regex = typeof searchText === 'string' ?
+  var regex = typeof searchText == 'string' ?
               new RegExp(searchText, 'ig') : searchText;
   var childNodes = (searchNode || document.body).childNodes;
   var cnLength = childNodes.length;
@@ -33,8 +33,8 @@ function findTextRecursively(searchNode, searchText) {
   
   while (cnLength--) {
     var currentNode = childNodes[cnLength];
-    if (currentNode.nodeType === 1 &&
-      (excludes + ',').indexOf(currentNode.nodeName.toLowerCase() + ',') === -1) {
+    if (currentNode.nodeType == 1 &&
+        (excludes + ',').indexOf(currentNode.nodeName.toLowerCase() + ',') == -1) {
       result = findTextRecursively(currentNode, searchText);
       if (result)
         return result;
@@ -96,7 +96,7 @@ function processSearch(search, searchIndex, skip_blur) {
 
 function isInputElementActive() {
   var name = document.activeElement.tagName;
-  return (name == "INPUT" || name == "SELECT" || name == "TEXTAREA")
+  return (name == "INPUT" || name == "SELECT" || name == "TEXTAREA");
 }
 
 function setKeyboardListeners() {
@@ -106,7 +106,7 @@ function setKeyboardListeners() {
     "enter": 13,
     "spacebar": 32,
     "escape": 27
-  }
+  };
   var search = "";
   var searchIndex = 0;
   
@@ -119,7 +119,7 @@ function setKeyboardListeners() {
     
     if (code == keycodes.backspace) {
       if (search) {
-        search = search.substr(0, search.length-1)
+        search = search.substr(0, search.length-1);
         processSearch(search, searchIndex);
       }
     } else if (code == keycodes.escape && search) {
