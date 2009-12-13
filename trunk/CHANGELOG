@@ -1,7 +1,7 @@
 chrome-type-ahead (0.0.2) unstable; urgency=low
 
   * Consider space entity (&nbsp;) as space in searches. 
-  * Options (internal) for case-sensitive and only-links.
+  * Add (internal) options: case-sensitive and only-links.
 
  --  <tokland@gmail.com>  Sun, 13 Dec 2009 15:03:46 +0100
 
