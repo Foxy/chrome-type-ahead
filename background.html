@@ -1,0 +1,18 @@
+<html>
+<head>
+  <script type="text/javascript">
+chrome.extension.onRequest.addListener(
+  function(request, sender, sendResponse) {
+    if (request.get_options) {
+      sendResponse(localStorage);
+    } else {
+      sendResponse({});
+    }
+  }
+);    
+  </script>
+</head>
+
+<body>
+</body>
+</html>

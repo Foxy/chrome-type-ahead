@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <title>Type-Ahead-Find - Extension Options</title>
+    <script type="text/javascript">
+      function feedback() {
+        // Update status to let user know options were saved.
+        var status = document.getElementById("status");
+        status.innerHTML = "Options Saved.";
+        setTimeout(function() {
+          status.innerHTML = "";
+        }, 750);
+      }
+
+      function save_options() {
+        var checkbox = document.getElementById("case_sensitive");
+        localStorage["case_sensitive"] = checkbox.checked ? '1': '0';
+        var checkbox = document.getElementById("search_only_links");
+        localStorage["search_only_links"] = checkbox.checked ? '1': '0';
+        feedback();
+      }
+
+      // Restores select box state to saved value from localStorage.
+      function restore_options() {
+        var checkbox = document.getElementById("case_sensitive");
+        checkbox.checked = localStorage["case_sensitive"] == '1';
+        var checkbox = document.getElementById("search_only_links");
+        checkbox.checked = localStorage["search_only_links"] == '1';
+      }      
+    </script>
+  </head>
+    
+  <body onload="restore_options()">
+    <h1>Type-Ahead-Find - Extension Options</h1>
+    <div id="status"></div>
+    <ul>
+      <li>
+        <label for="case_sensitive"> 
+          <input id="case_sensitive" type="checkbox" value="1" />
+          Case sensitive
+        </label>
+      </li>
+      <li>
+        <label for="search_only_links">
+          <input id="search_only_links" type="checkbox" value="1" />
+          Search only links
+        </label>
+      </li>
+    </ul>
+    <button onclick="save_options()">Save</button>
+  </body>
+</html>
