@@ -18,6 +18,50 @@
  Author: Arnau Sanchez <tokland@gmail.com> 
 */ 
 
+/* Styles taken from nice-alert.js */
+
+var styles = '\
+  #type-ahead-box {\
+    font: 14px/16px sans-serif !important;\
+    position: fixed !important;\
+    top: 0 !important;\
+    right: 0 !important;\
+    margin: 0 !important;\
+    padding: 0 !important;\
+    list-style-type: none !important;\
+    float: left !important;\
+    cursor: pointer !important;\
+    text-align: left !important;\
+    z-index: 9999 !important;\
+  }\
+  \
+  #type-ahead-contents {\
+    background-color: InfoBackground !important;\
+    color: InfoText !important;\
+    border-bottom: 1px solid #ccc !important;\
+    border-bottom: 1px solid rgba(0,0,0,0.3) !important;\
+    margin: 0 !important;\
+    padding: 2px 5px;\
+    float: right !important;\
+    clear: both !important;\
+    overflow: hidden !important;\
+    font-size: 14px !important;\
+    white-space: pre-wrap !important;\
+    min-width: 50px;\
+    outline: 0 !important;\
+    -webkit-box-shadow: 0px 2px 8px rgba(0,0,0,0.2);\
+    -moz-box-shadow: 0px 2px 8px rgba(0,0,0,0.3);'
+
+function addStyle(css) {
+  var head = document.getElementsByTagName('head')[0];
+  if (head) {
+    var style = document.createElement("style");
+    style.type = "text/css";
+    style.appendChild(document.createTextNode(css));
+    head.appendChild(style);
+  }
+}
+    
 function getSelectedAnchor() {
   if (document.activeElement.tagName == "A")
     return(document.activeElement);
@@ -62,6 +106,29 @@ function findTextRecursively(searchNode, searchText, case_sensitive) {
       }
     }
   }
+}
+
+function clearSearchBox() {
+  var box = document.getElementById('type-ahead-box');
+  if (box) {
+    box.style.display = 'none';
+  }
+}
+
+function showSearchBox(string) {
+  var contents = document.getElementById('type-ahead-contents');
+  if (!contents) { 
+    var box = document.createElement('TABOX');
+    contents = document.createElement('TACONTENTS');
+    contents.id = 'type-ahead-contents';
+    box.appendChild(contents);
+    box.id = 'type-ahead-box';
+    document.documentElement.appendChild(box);
+    addStyle(styles);
+  }
+  var box = document.getElementById('type-ahead-box');
+  box.style.display = 'block';
+  contents.innerHTML = string || '&nbsp;';
 }
 
 function processSearch(search, searchIndex, options) {
@@ -114,8 +181,18 @@ function init(typeAheadOptions) {
     "spacebar": 32,
     "escape": 27
   };
+  var search_mode = null;
   var search = "";
   var searchIndex = 0;
+
+  function clearSearch() {
+    search = '';
+    searchIndex = 0;
+    search_mode = null;
+    selection = window.getSelection();
+    selection.removeAllRanges();
+    clearSearchBox();
+  }    
    
   function processSearchWithOptions(blur_unless_found) {
     return processSearch(search, searchIndex, 
@@ -127,26 +204,21 @@ function init(typeAheadOptions) {
 
   window.addEventListener('keydown', function(ev) {
     if (isInputElementActive())
-      return;
+      return;      
       
     var code = ev.keyCode;
     var selectedAnchor = getSelectedAnchor();    
-    
-    if (code == keycodes.backspace) {
+        
+    if (code == keycodes.backspace && search_mode) {
       if (search) {
         search = search.substr(0, search.length-1);
         processSearchWithOptions(true);
+        showSearchBox(search);
       }
-    } else if (code == keycodes.escape && search) {
-      selection = window.getSelection();
-      selection.removeAllRanges();
-      search = "";
-      searchIndex = 0;
+    } else if (code == keycodes.escape) {
+      clearSearch();
     } else if (code == keycodes.enter && selectedAnchor) {
-      selection = window.getSelection();
-      selection.removeAllRanges();
-      search = "";
-      searchIndex = 0;
+      clearSearch();
       return;
     } else if (code == keycodes.tab && selectedAnchor && search) {
       searchIndex += ev.shiftKey ? -1 : +1;
@@ -171,6 +243,9 @@ function init(typeAheadOptions) {
       search += ascii;
       if (!processSearchWithOptions(false)) {
         search = old_search;
+      } else {
+        search_mode = 1;
+        showSearchBox(search);
       }
       if (code == keycodes.spacebar) {
         ev.preventDefault();
