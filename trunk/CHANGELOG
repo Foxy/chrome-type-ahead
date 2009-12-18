@@ -1,3 +1,10 @@
+chrome-type-ahead (0.0.3) unstable; urgency=low
+
+  * Show overlay box with current search 
+  * Add options: only links, case sensitive
+
+ --  <tokland@gmail.com>  Fri, 18 Dec 2009 20:06:20 +0100
+
 chrome-type-ahead (0.0.2) unstable; urgency=low
 
   * Consider space entity (&nbsp;) as space in searches. 
