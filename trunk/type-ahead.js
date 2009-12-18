@@ -106,7 +106,7 @@ function processSearch(search, searchIndex, options) {
   return(selected);
 }
 
-function init() {
+function init(typeAheadOptions) {
   var keycodes = {
     "backspace": 8,
     "tab": 9,
@@ -116,13 +116,7 @@ function init() {
   };
   var search = "";
   var searchIndex = 0;
-  
-  /* For now a content script cannot access localStorage, use a static dictionary. */ 
-  var typeAheadOptions = {
-    case_sensitive: false,
-    search_only_links: true
-  };
-  
+   
   function processSearchWithOptions(blur_unless_found) {
     return processSearch(search, searchIndex, 
       {case_sensitive: typeAheadOptions["case_sensitive"], 
@@ -186,4 +180,15 @@ function init() {
   }, false);
 }
 
-init();
+/*  
+var typeAheadOptions = {
+*/
+
+chrome.extension.sendRequest({'get_options': true}, function(response) {
+  var options = {
+    case_sensitive: (response.case_sensitive == '1'),
+    search_only_links: (response.search_only_links == '1')
+  };
+    
+  init(options);
+});
