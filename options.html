@@ -14,8 +14,8 @@
       function save_options() {
         var checkbox = document.getElementById("case_sensitive");
         localStorage["case_sensitive"] = checkbox.checked ? '1': '0';
-        var checkbox = document.getElementById("search_only_links");
-        localStorage["search_only_links"] = checkbox.checked ? '1': '0';
+        var checkbox = document.getElementById("main_search_only_links");
+        localStorage["main_search_only_links"] = checkbox.checked ? '1': '0';
         feedback();
       }
 
@@ -23,29 +23,42 @@
       function restore_options() {
         var checkbox = document.getElementById("case_sensitive");
         checkbox.checked = localStorage["case_sensitive"] == '1';
-        var checkbox = document.getElementById("search_only_links");
-        checkbox.checked = localStorage["search_only_links"] == '1';
+        var checkbox = document.getElementById("main_search_only_links");
+        checkbox.checked = localStorage["main_search_only_links"] == '1';
       }      
     </script>
   </head>
     
   <body onload="restore_options()">
-    <h1>Type-Ahead-Find - Extension Options</h1>
+    <h1>Type-Ahead-Find - Options</h1>
+    
     <div id="status"></div>
-    <ul>
-      <li>
-        <label for="case_sensitive"> 
-          <input id="case_sensitive" type="checkbox" value="1" />
-          Case sensitive
-        </label>
-      </li>
-      <li>
-        <label for="search_only_links">
-          <input id="search_only_links" type="checkbox" value="1" />
-          Search only links
-        </label>
-      </li>
-    </ul>
-    <button onclick="save_options()">Save</button>
+    <div id="configuration">
+      <ul>
+        <li>
+          <label for="case_sensitive"> 
+            <input id="case_sensitive" type="checkbox" value="1" />
+            Case sensitive.
+          </label>
+        </li>
+        <li>
+          <label for="main_search_only_links">
+            <input id="main_search_only_links" type="checkbox" value="1" />
+            Main action matches only links.
+          </label>
+        </li>
+      </ul>
+      <button onclick="save_options()">Save</button>
+    </div>
+
+    <hr />    
+    <h2>How to use this extension</h2>
+    <div id="info">
+      <ul>
+        <li>Search text and links in a page as you write the string you want to seek.</li>
+        <li>Use <i>TAB</i> to switch between matched links.</li>
+        <li>Press <strong>'</strong> to activate secondary search.</li>
+      </ul>               
+    </div>    
   </body>
 </html>
