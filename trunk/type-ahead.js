@@ -22,36 +22,29 @@
 
 var styles = '\
   #type-ahead-box {\
-    font: 18px sans-serif !important;\
     position: fixed !important;\
     top: 0 !important;\
     right: 0 !important;\
     margin: 0 !important;\
-    padding: 0 !important;\
-    list-style-type: none !important;\
-    float: left !important;\
-    cursor: pointer !important;\
     text-align: left !important;\
     z-index: 9999 !important;\
-  }\
-  \
-  #type-ahead-contents {\
     //background-color: #FFC !important;\
     color: #000 !important;\
     border-bottom: 1px solid #ccc !important;\
     border-bottom: 1px solid rgba(0,0,0,0.3) !important;\
-    margin: 0 !important;\
-    padding: 2px 5px;\
+    padding: 4px 8px;\
     opacity: 0.9;\
     float: right !important;\
     clear: both !important;\
     overflow: hidden !important;\
     font-size: 18px !important;\
+    font-family: Verdana, Georgia, Serif;\
     white-space: pre-wrap !important;\
-    min-width: 50px;\
+    min-width: 60px;\
     outline: 0 !important;\
     -webkit-box-shadow: 0px 2px 8px rgba(0,0,0,0.2);\
-    -moz-box-shadow: 0px 2px 8px rgba(0,0,0,0.3);'
+    -moz-box-shadow: 0px 2px 8px rgba(0,0,0,0.3);\
+  }'
 
 function addStyle(css) {
   var head = document.getElementsByTagName('head')[0];
@@ -76,37 +69,20 @@ function up(element, tagName) {
   return element;
 }
 
+function scrollToElement(element) {
+  var selectedPosX = 0;
+  var selectedPosY = 0;              
+  while(element) {
+    selectedPosX += element.offsetLeft;
+    selectedPosY += element.offsetTop;
+    element = element.offsetParent;
+  }
+  window.scrollTo(selectedPosX, selectedPosY);
+}
+
 function isInputElementActive() {
   var name = document.activeElement.tagName;
   return (name == "INPUT" || name == "SELECT" || name == "TEXTAREA");
-}
-
-// Based on http://james.padolsey.com/javascript/find-and-replace-text-with-javascript/
-function findTextRecursively(searchNode, searchText, case_sensitive) {
-  var regex_type = case_sensitive ? 'g' : 'ig';
-  var regex = typeof searchText == 'string' ?
-              new RegExp(searchText, regex_type) : searchText;
-  var childNodes = (searchNode || document.body).childNodes;
-  var cnLength = childNodes.length;
-  var excludes = '';
-  
-  while (cnLength--) {
-    var currentNode = childNodes[cnLength];
-    if (currentNode.nodeType == 1 &&
-        (excludes + ',').indexOf(currentNode.nodeName.toLowerCase() + ',') == -1) {
-      result = findTextRecursively(currentNode, searchText, case_sensitive);
-      if (result)
-        return result;
-    }
-    if (currentNode.nodeType == Node.TEXT_NODE) {
-      var start = currentNode.data.search(regex);
-      if (start >= 0) {
-        regex.exec(currentNode.data);
-        var end = regex.lastIndex;
-        return {node: currentNode, start: start, end: end}
-      }
-    }
-  }
 }
 
 function clearSearchBox() {
@@ -117,21 +93,17 @@ function clearSearchBox() {
 }
 
 function showSearchBox(search) {
-  var contents = document.getElementById('type-ahead-contents');
-  if (!contents) { 
-    var box = document.createElement('TABOX');
-    contents = document.createElement('TACONTENTS');
-    contents.id = 'type-ahead-contents';
-    box.appendChild(contents);
+  var box = document.getElementById('type-ahead-box');
+  if (!box) { 
+    box = document.createElement('TABOX');
     box.id = 'type-ahead-box';
     document.documentElement.appendChild(box);
     addStyle(styles);
   }
-  var box = document.getElementById('type-ahead-box');
   box.style.display = 'block';
-  var color = (search.mode == 1) ? '#FFC' : '#FA7'; 
-  contents.style['background-color'] = color;
-  contents.innerHTML = search.text || '&nbsp;';
+  var color = (search.mode == 1) ? '#FFD' : '#DDF'; 
+  box.style['background-color'] = color;
+  box.innerHTML = search.text || '&nbsp;';
 }
 
 function processSearch(search, options) {
@@ -139,27 +111,46 @@ function processSearch(search, options) {
   var selectedAnchor = getSelectedAnchor();
   var selection = window.getSelection();
   
-  if (search.text.length > 0) {
+  if (search.text.length > 0) {  
     var matchedElements = [];
-    var elements = options.search_only_links ? 
-      document.body.getElementsByTagName('a') : [document.body]
-    var smartSearch = search.text.replace(/\s+/g, "(\\s|\240)+");
-    for(var index = 0; index < elements.length; index++) {
-      anchor = elements[index];
-      result = findTextRecursively(anchor, smartSearch, options.case_sensitive);
-      if (result) {
+    var string = search.text.replace(/\s+/g, "(\\s|\240)+");
+    var regexp =  new RegExp(string, options.case_sensitive ? 'g' : 'ig')
+    //x= document.evaluate('//td//*[matches(text(),"ins.")]',document.body,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null).snapshotItem(0);
+    var nodeIterator = document.createNodeIterator(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      { 
+        acceptNode: function (node) {
+          return regexp.test(node.data) ? 
+            NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      },
+      true
+    );    
+
+    while ((textNode = nodeIterator.nextNode()) != null) {
+      var anchor = up(textNode, 'a')
+      if (search.mode == 2 && !anchor)
+        continue;
+      var regexp2 = new RegExp(regexp);
+      var start = textNode.data.search(regexp2);
+      if (start >= 0) {
+        regexp2.exec(textNode.data);
+        var end = regexp2.lastIndex;
+        var result = {node: textNode, anchor: anchor, start: start, end: end};
         matchedElements.push(result);
-      } 
-    }
+      }
+    }    
+    
     if (matchedElements.length > 0) {
       var index = search.index % matchedElements.length;
       if (index < 0)
-        index += matchedElements.length; 
-      node = matchedElements[index].node;
-      var upAnchor = up(node, 'a');
-      if (upAnchor) {
-        upAnchor.focus();
-      }
+        index += matchedElements.length;
+      var node = matchedElements[index].node;
+      if (matchedElements[index].anchor)
+        matchedElements[index].anchor.focus();
+      else
+        scrollToElement(node.parentNode);
       selection.removeAllRanges();
       var range = document.createRange();
       range.setStart(node, matchedElements[index].start);
@@ -191,13 +182,14 @@ function init(options) {
     selection = window.getSelection();
     selection.removeAllRanges();
     clearSearchBox();
-  }    
+  }
+  
+  //clearSearch();    
    
   function processSearchWithOptions(blur_unless_found) {
     return processSearch(search, { 
       case_sensitive: options["case_sensitive"], 
-      search_only_links: (search.mode == 1 && options.main_search_only_links) ||
-                         (search.mode == 2 && !options.main_search_only_links),
+      search_only_links: (search.mode == 2),
       blur_unless_found: blur_unless_found
     });    
   }
@@ -220,7 +212,7 @@ function init(options) {
     } else if (code == keycodes.enter && selectedAnchor) {
       clearSearch();
       return;
-    } else if (code == keycodes.tab && selectedAnchor && search.text) {
+    } else if (code == keycodes.tab && search.text) {
       search.index += ev.shiftKey ? -1 : +1;
       processSearchWithOptions(true);
     } else {
@@ -241,9 +233,12 @@ function init(options) {
         (code != keycodes.spacebar || search.mode)) {
       var old_text = search.text;
       var add = true; 
-      if (!search.mode) {  
-        search.mode = (ascii == "'") ? 2 : 1;
-        if (search.mode == 2)
+      if (!search.mode) {
+        if (options.main_search_only_links)  
+          search.mode = (ascii == "'") ? 1 : 2;
+        else
+          search.mode = (ascii == "'") ? 2 : 1;
+        if (ascii == "'")
           add = false;
       }
       if (add) 
@@ -258,7 +253,7 @@ function init(options) {
     }        
   }, false);
   
-  window.addEventListener('mousedown', function(ev) {
+  document.body.addEventListener('mousedown', function(ev) {
     if (search.mode)
       clearSearch();      
   }, false);  
@@ -268,11 +263,21 @@ function init(options) {
 var options = {
 */
 
-chrome.extension.sendRequest({'get_options': true}, function(response) {
-  var options = {
-    case_sensitive: (response.case_sensitive == '1'),
-    main_search_only_links: (response.main_search_only_links == '1')
-  };
-    
-  init(options);
-});
+var options = {
+  case_sensitive: false,
+  main_search_only_links: false
+};
+
+if (chrome.extension) {
+  chrome.extension.sendRequest({'get_options': true}, function(response) {
+    options = {
+      case_sensitive: (response.case_sensitive == '1'),
+      main_search_only_links: (response.main_search_only_links == '1')
+    };
+    init(options);
+  });
+} else {
+  window.addEventListener('load', function(ev) {
+    init(options);
+  });
+}
