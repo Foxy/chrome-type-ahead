@@ -69,6 +69,11 @@ function up(element, tagName) {
   return element;
 }
 
+function getStyle(el, styleProp)
+{
+  return document.defaultView.getComputedStyle(el, null).getPropertyValue(styleProp);
+}
+
 function scrollToElement(element) {
   var selectedPosX = 0;
   var selectedPosY = 0;              
@@ -103,7 +108,8 @@ function showSearchBox(search) {
   box.style.display = 'block';
   var color = (search.mode == 1) ? '#FFD' : '#DDF'; 
   box.style['background-color'] = color;
-  box.innerHTML = search.text || '&nbsp;';
+  box.innerHTML = search.text ? 
+    (search.text + ' (' + search.nmatch + ' of ' + search.total + ')') : '&nbsp;';
 }
 
 function processSearch(search, options) {
@@ -115,7 +121,8 @@ function processSearch(search, options) {
     var matchedElements = [];
     var string = search.text.replace(/\s+/g, "(\\s|\240)+");
     var regexp =  new RegExp(string, options.case_sensitive ? 'g' : 'ig')
-    //x= document.evaluate('//td//*[matches(text(),"ins.")]',document.body,null,XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null).snapshotItem(0);
+    // thix xpath does not support matches :-(
+    // document.evaluate('//a//*[matches(text(),"regexp")]', document.body, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(N);
     var nodeIterator = document.createNodeIterator(
       document.body,
       NodeFilter.SHOW_TEXT,
@@ -129,7 +136,9 @@ function processSearch(search, options) {
     );    
 
     while ((textNode = nodeIterator.nextNode()) != null) {
-      var anchor = up(textNode, 'a')
+      if (getStyle(textNode.parentNode, 'display') == 'none')
+        continue;
+      var anchor = up(textNode, 'a');
       if (search.mode == 2 && !anchor)
         continue;
       var regexp2 = new RegExp(regexp);
@@ -140,16 +149,18 @@ function processSearch(search, options) {
         var result = {node: textNode, anchor: anchor, start: start, end: end};
         matchedElements.push(result);
       }
-    }    
+    }
+    search.total = matchedElements.length;
     
     if (matchedElements.length > 0) {
       var index = search.index % matchedElements.length;
       if (index < 0)
         index += matchedElements.length;
+      search.nmatch = index + 1;      
       var node = matchedElements[index].node;
       if (matchedElements[index].anchor)
         matchedElements[index].anchor.focus();
-      else
+      //else
         scrollToElement(node.parentNode);
       selection.removeAllRanges();
       var range = document.createRange();
@@ -175,10 +186,10 @@ function init(options) {
     "spacebar": 32,
     "escape": 27
   };
-  var search = {mode: null, text: '', index: 0}; 
+  var search = {mode: null, text: '', index: 0, matches: 0, total: 0}; 
 
   function clearSearch() {
-    search = {mode: null, text: '', index: 0};
+    search = {mode: null, text: '', index: 0, matches: 0, total: 0}; 
     selection = window.getSelection();
     selection.removeAllRanges();
     clearSearchBox();
@@ -215,6 +226,7 @@ function init(options) {
     } else if (code == keycodes.tab && search.text) {
       search.index += ev.shiftKey ? -1 : +1;
       processSearchWithOptions(true);
+      showSearchBox(search);
     } else {
       return;
     }
