@@ -1,5 +1,5 @@
 /*
- Chrome-type-ahead: search for links when you start typing. 
+ Chrome-type-ahead: find text as you write. 
  
  This script is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
  Author: Arnau Sanchez <tokland@gmail.com> 
 */ 
 
-/* Styles taken from nice-alert.js */
+/* Styles and addStyle borrowed from nice-alert.js */
 
 var styles = '\
   #type-ahead-box {\
-    font: 14px/16px sans-serif !important;\
+    font: 18px sans-serif !important;\
     position: fixed !important;\
     top: 0 !important;\
     right: 0 !important;\
@@ -36,16 +36,17 @@ var styles = '\
   }\
   \
   #type-ahead-contents {\
-    background-color: InfoBackground !important;\
-    color: InfoText !important;\
+    //background-color: #FFC !important;\
+    color: #000 !important;\
     border-bottom: 1px solid #ccc !important;\
     border-bottom: 1px solid rgba(0,0,0,0.3) !important;\
     margin: 0 !important;\
     padding: 2px 5px;\
+    opacity: 0.9;\
     float: right !important;\
     clear: both !important;\
     overflow: hidden !important;\
-    font-size: 14px !important;\
+    font-size: 18px !important;\
     white-space: pre-wrap !important;\
     min-width: 50px;\
     outline: 0 !important;\
@@ -115,7 +116,7 @@ function clearSearchBox() {
   }
 }
 
-function showSearchBox(string) {
+function showSearchBox(search) {
   var contents = document.getElementById('type-ahead-contents');
   if (!contents) { 
     var box = document.createElement('TABOX');
@@ -128,7 +129,10 @@ function showSearchBox(string) {
   }
   var box = document.getElementById('type-ahead-box');
   box.style.display = 'block';
-  contents.innerHTML = string || '&nbsp;';
+  var color = (search.mode == 1) ? '#FFC' : '#FA7'; 
+  console.log(color);
+  contents.style['background-color'] = color;
+  contents.innerHTML = search.text || '&nbsp;';
 }
 
 function processSearch(search, options) {
@@ -193,7 +197,8 @@ function init(options) {
   function processSearchWithOptions(blur_unless_found) {
     return processSearch(search, { 
       case_sensitive: options["case_sensitive"], 
-      search_only_links: options["search_only_links"],
+      search_only_links: (search.mode == 1 && options.main_search_only_links) ||
+                         (search.mode == 2 && !options.main_search_only_links),
       blur_unless_found: blur_unless_found
     });    
   }
@@ -209,7 +214,7 @@ function init(options) {
       if (search.text) {
         search.text = search.text.substr(0, search.text.length-1);
         processSearchWithOptions(true);
-        showSearchBox(search.text);
+        showSearchBox(search);
       }
     } else if (code == keycodes.escape) {
       clearSearch();
@@ -235,14 +240,16 @@ function init(options) {
     
     if (!ev.altKey && !ev.metaKey && !ev.controlKey && ascii && 
         (code != keycodes.spacebar || search.mode)) {
+      if (!search.mode) 
+        search.mode = (ascii == "'") ? 2 : 1; 
+      console.log(ascii);
+      console.log(search.mode);
       var old_text = search.text; 
       search.text += ascii;
       if (!processSearchWithOptions(false)) {
         search.text = old_text;
-      } else {
-        search.mode = 1;
-        showSearchBox(search.text);
-      }
+      } 
+      showSearchBox(search);
       if (code == keycodes.spacebar) {
         ev.preventDefault();
         ev.stopPropagation();
@@ -251,9 +258,8 @@ function init(options) {
   }, false);
   
   window.addEventListener('mousedown', function(ev) {
-    if (search.mode) {
+    if (search.mode)
       clearSearch();      
-    }  
   }, false);  
 }
 
@@ -264,7 +270,7 @@ var options = {
 chrome.extension.sendRequest({'get_options': true}, function(response) {
   var options = {
     case_sensitive: (response.case_sensitive == '1'),
-    search_only_links: (response.search_only_links == '1')
+    main_search_only_links: (response.main_search_only_links == '1')
   };
     
   init(options);
