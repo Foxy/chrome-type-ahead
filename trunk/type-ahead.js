@@ -150,9 +150,9 @@ function processSearch(search, options) {
         matchedElements.push(result);
       }
     }
-    search.total = matchedElements.length;
     
     if (matchedElements.length > 0) {
+      search.total = matchedElements.length;
       var index = search.index % matchedElements.length;
       if (index < 0)
         index += matchedElements.length;
