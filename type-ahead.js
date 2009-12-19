@@ -109,7 +109,7 @@ function showSearchBox(search) {
   var color = (search.mode == 1) ? '#FFD' : '#DDF'; 
   box.style['background-color'] = color;
   box.innerHTML = search.text ? 
-    (search.text + ' (' + search.nmatch + ' of ' + search.total + ')') : '&nbsp;';
+    (search.text + ' <small>(' + search.nmatch + ' of ' + search.total + ')</small>') : '&nbsp;';
 }
 
 function processSearch(search, options) {
