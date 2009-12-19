@@ -173,7 +173,7 @@ function processSearch(search, options) {
   return(selected);
 }
 
-function init(typeAheadOptions) {
+function init(options) {
   var keycodes = {
     "backspace": 8,
     "tab": 9,
@@ -192,8 +192,8 @@ function init(typeAheadOptions) {
    
   function processSearchWithOptions(blur_unless_found) {
     return processSearch(search, { 
-      case_sensitive: typeAheadOptions["case_sensitive"], 
-      search_only_links: typeAheadOptions["search_only_links"],
+      case_sensitive: options["case_sensitive"], 
+      search_only_links: options["search_only_links"],
       blur_unless_found: blur_unless_found
     });    
   }
@@ -258,7 +258,7 @@ function init(typeAheadOptions) {
 }
 
 /*  
-var typeAheadOptions = {
+var options = {
 */
 
 chrome.extension.sendRequest({'get_options': true}, function(response) {
