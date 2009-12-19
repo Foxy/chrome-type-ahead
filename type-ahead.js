@@ -201,7 +201,7 @@ function init(typeAheadOptions) {
        blur_unless_found: blur_unless_found
       });    
   }
-
+ 
   window.addEventListener('keydown', function(ev) {
     if (isInputElementActive())
       return;      
@@ -253,6 +253,12 @@ function init(typeAheadOptions) {
       }
     }        
   }, false);
+  
+  window.addEventListener('mousedown', function(ev) {
+    if (search_mode) {
+      clearSearch();      
+    }  
+  }, false);  
 }
 
 /*  
