@@ -130,7 +130,6 @@ function showSearchBox(search) {
   var box = document.getElementById('type-ahead-box');
   box.style.display = 'block';
   var color = (search.mode == 1) ? '#FFC' : '#FA7'; 
-  console.log(color);
   contents.style['background-color'] = color;
   contents.innerHTML = search.text || '&nbsp;';
 }
@@ -240,15 +239,17 @@ function init(options) {
     
     if (!ev.altKey && !ev.metaKey && !ev.controlKey && ascii && 
         (code != keycodes.spacebar || search.mode)) {
-      if (!search.mode) 
-        search.mode = (ascii == "'") ? 2 : 1; 
-      console.log(ascii);
-      console.log(search.mode);
-      var old_text = search.text; 
-      search.text += ascii;
-      if (!processSearchWithOptions(false)) {
+      var old_text = search.text;
+      var add = true; 
+      if (!search.mode) {  
+        search.mode = (ascii == "'") ? 2 : 1;
+        if (search.mode == 2)
+          add = false;
+      }
+      if (add) 
+        search.text += ascii;
+      if (!processSearchWithOptions(false))
         search.text = old_text;
-      } 
       showSearchBox(search);
       if (code == keycodes.spacebar) {
         ev.preventDefault();
