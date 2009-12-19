@@ -131,16 +131,16 @@ function showSearchBox(string) {
   contents.innerHTML = string || '&nbsp;';
 }
 
-function processSearch(search, searchIndex, options) {
+function processSearch(search, options) {
   var selected = false;    
   var selectedAnchor = getSelectedAnchor();
   var selection = window.getSelection();
   
-  if (search.length > 0) {
+  if (search.text.length > 0) {
     var matchedElements = [];
     var elements = options.search_only_links ? 
       document.body.getElementsByTagName('a') : [document.body]
-    var smartSearch = search.replace(/\s+/g, "(\\s|\240)+");
+    var smartSearch = search.text.replace(/\s+/g, "(\\s|\240)+");
     for(var index = 0; index < elements.length; index++) {
       anchor = elements[index];
       result = findTextRecursively(anchor, smartSearch, options.case_sensitive);
@@ -149,7 +149,7 @@ function processSearch(search, searchIndex, options) {
       } 
     }
     if (matchedElements.length > 0) {
-      var index = searchIndex % matchedElements.length;
+      var index = search.index % matchedElements.length;
       if (index < 0)
         index += matchedElements.length; 
       node = matchedElements[index].node;
@@ -181,25 +181,21 @@ function init(typeAheadOptions) {
     "spacebar": 32,
     "escape": 27
   };
-  var search_mode = null;
-  var search = "";
-  var searchIndex = 0;
+  var search = {mode: null, text: '', index: 0}; 
 
   function clearSearch() {
-    search = '';
-    searchIndex = 0;
-    search_mode = null;
+    search = {mode: null, text: '', index: 0};
     selection = window.getSelection();
     selection.removeAllRanges();
     clearSearchBox();
   }    
    
   function processSearchWithOptions(blur_unless_found) {
-    return processSearch(search, searchIndex, 
-      {case_sensitive: typeAheadOptions["case_sensitive"], 
-       search_only_links: typeAheadOptions["search_only_links"],
-       blur_unless_found: blur_unless_found
-      });    
+    return processSearch(search, { 
+      case_sensitive: typeAheadOptions["case_sensitive"], 
+      search_only_links: typeAheadOptions["search_only_links"],
+      blur_unless_found: blur_unless_found
+    });    
   }
  
   window.addEventListener('keydown', function(ev) {
@@ -209,19 +205,19 @@ function init(typeAheadOptions) {
     var code = ev.keyCode;
     var selectedAnchor = getSelectedAnchor();    
         
-    if (code == keycodes.backspace && search_mode) {
-      if (search) {
-        search = search.substr(0, search.length-1);
+    if (code == keycodes.backspace && search.mode) {
+      if (search.text) {
+        search.text = search.text.substr(0, search.text.length-1);
         processSearchWithOptions(true);
-        showSearchBox(search);
+        showSearchBox(search.text);
       }
     } else if (code == keycodes.escape) {
       clearSearch();
     } else if (code == keycodes.enter && selectedAnchor) {
       clearSearch();
       return;
-    } else if (code == keycodes.tab && selectedAnchor && search) {
-      searchIndex += ev.shiftKey ? -1 : +1;
+    } else if (code == keycodes.tab && selectedAnchor && search.text) {
+      search.index += ev.shiftKey ? -1 : +1;
       processSearchWithOptions(true);
     } else {
       return;
@@ -238,14 +234,14 @@ function init(typeAheadOptions) {
     var ascii = String.fromCharCode(code);
     
     if (!ev.altKey && !ev.metaKey && !ev.controlKey && ascii && 
-        (code != keycodes.spacebar || search)) {
-      var old_search = search; 
-      search += ascii;
+        (code != keycodes.spacebar || search.mode)) {
+      var old_text = search.text; 
+      search.text += ascii;
       if (!processSearchWithOptions(false)) {
-        search = old_search;
+        search.text = old_text;
       } else {
-        search_mode = 1;
-        showSearchBox(search);
+        search.mode = 1;
+        showSearchBox(search.text);
       }
       if (code == keycodes.spacebar) {
         ev.preventDefault();
@@ -255,7 +251,7 @@ function init(typeAheadOptions) {
   }, false);
   
   window.addEventListener('mousedown', function(ev) {
-    if (search_mode) {
+    if (search.mode) {
       clearSearch();      
     }  
   }, false);  
