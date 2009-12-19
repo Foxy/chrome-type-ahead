@@ -1,3 +1,9 @@
+chrome-type-ahead (0.0.4) unstable; urgency=low
+
+  * Fix text search
+
+ --  <tokland@gmail.com>  Sat, 19 Dec 2009 22:51:14 +0100
+
 chrome-type-ahead (0.0.3) unstable; urgency=low
 
   * Show overlay box with current search 
