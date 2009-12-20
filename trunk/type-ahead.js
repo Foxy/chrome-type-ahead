@@ -201,7 +201,7 @@ function init(options) {
   function processSearchWithOptions(blur_unless_found) {
     return processSearch(search, { 
       case_sensitive: options["case_sensitive"], 
-      search_only_links: (search.mode == 'links'),
+      search_links: (search.mode == 'links'),
       blur_unless_found: blur_unless_found
     });    
   }
@@ -248,8 +248,7 @@ function init(options) {
       var old_text = search.text;
       var add = true; 
       if (!search.mode) {
-        var only_links = options.main_search_only_links;
-        search.mode = ((ascii == "'") ^ only_links) ? 'links' : 'text';
+        search.mode = ((ascii == "'") ^ options.main_search_links) ? 'links' : 'text';
         if (ascii == "'")
           add = false;
       }
@@ -277,14 +276,14 @@ var options = {
 
 var options = {
   case_sensitive: false,
-  main_search_only_links: false
+  main_search_links: false
 };
 
 if (chrome.extension) {
   chrome.extension.sendRequest({'get_options': true}, function(response) {
     options = {
       case_sensitive: (response.case_sensitive == '1'),
-      main_search_only_links: (response.main_search_only_links == '1')
+      main_search_links: (response.main_search_links == '1')
     };
     init(options);
   });
