@@ -272,7 +272,8 @@ function init(options) {
     var code = ev.keyCode;
     var ascii = String.fromCharCode(code);
     
-    if (!ev.altKey && !ev.metaKey && !ev.ctrlKey && ascii && 
+    if (!ev.altKey && !ev.metaKey && !ev.ctrlKey && 
+        ascii && code != keycodes.enter &&
         (code != keycodes.spacebar || search.mode)) {
       var add = true; 
       if (!search.mode) {
