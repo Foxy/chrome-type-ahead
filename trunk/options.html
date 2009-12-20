@@ -3,9 +3,8 @@
     <title>Type-ahead-find options</title>
     <script type="text/javascript">
       function feedback() {
-        // Update status to let user know options were saved.
         var status = document.getElementById("status");
-        status.innerHTML = "<i>options saved</i>";
+        status.innerHTML = "<i>Options saved</i>";
         setTimeout(function() {
           status.innerHTML = "";
         }, 750);
@@ -19,7 +18,6 @@
         feedback();
       }
 
-      // Restores select box state to saved value from localStorage.
       function restore_options() {
         var checkbox = document.getElementById("case_sensitive");
         checkbox.checked = localStorage["case_sensitive"] == '1';
@@ -51,10 +49,12 @@
     <h2>How to use this extension</h2>
     <div id="info">
       <ul>
-        <li>Write directly the text you want to search (that's the primary search).</li>
-        <li>Press <strong>'</strong> to start the secondary search (by default, this mode matches links).</li>
+        <li>Write directly the text you want to search (this is the primary search).</li>
+        <li>Press <strong>'</strong> to start the secondary search (by default, this mode matches only links).</li>
         <li>Use <i>F3</i> or <i>Control+G</i> to switch between matches.</li>        
       </ul>               
-    </div>    
+    </div>
+    
+    See the <a href="http://code.google.com/p/chrome-type-ahead/">Chrome-ahead-find website</a> for more information about this extension.    
   </body>
 </html>
