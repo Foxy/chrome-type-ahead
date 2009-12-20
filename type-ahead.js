@@ -74,8 +74,7 @@ function up(element, tagName) {
   return element;
 }
 
-function getStyle(el, styleProp)
-{
+function getStyle(el, styleProp) {
   return document.defaultView.getComputedStyle(el, null).getPropertyValue(styleProp);
 }
 
@@ -165,8 +164,12 @@ function processSearch(search, options) {
       var node = matchedElements[index].node;
       if (matchedElements[index].anchor)
         matchedElements[index].anchor.focus();
-      //else
+      else
         scrollToElement(node.parentNode);
+      var option = up(node.parentNode, 'option');
+      if (option) {
+        option.selected = 'selected';
+      }        
       selection.removeAllRanges();
       var range = document.createRange();
       range.setStart(node, matchedElements[index].start);
