@@ -212,7 +212,6 @@ function init(options) {
       
     var code = ev.keyCode;
     var selectedAnchor = getSelectedAnchor();
-    console.log(code+"-"+   ev.ctrlKey); 
         
     if (code == keycodes.backspace && search.mode) {
       if (search.text) {
