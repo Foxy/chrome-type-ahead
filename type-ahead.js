@@ -151,6 +151,8 @@ function processSearch(search, options) {
     while ((textNode = nodeIterator.nextNode()) != null) {
       if (!isVisible(textNode.parentNode))
         continue;
+      if (up(textNode, 'script'))
+        continue;
       var anchor = up(textNode, 'a');
       if (search.mode == 'links' && !anchor)
         continue;
