@@ -106,7 +106,7 @@ function showSearchBox(search) {
     addStyle(styles);
   }
   box.style.display = 'block';
-  var color = (search.mode == 1) ? '#FFD' : '#DDF'; 
+  var color = (search.mode == 'text') ? '#FFD' : '#DDF'; 
   box.style['background-color'] = color;
   box.innerHTML = search.text ? 
     (search.text + ' <small>(' + search.nmatch + ' of ' + search.total + ')</small>') : '&nbsp;';
@@ -139,7 +139,7 @@ function processSearch(search, options) {
       if (getStyle(textNode.parentNode, 'display') == 'none')
         continue;
       var anchor = up(textNode, 'a');
-      if (search.mode == 2 && !anchor)
+      if (search.mode == 'links' && !anchor)
         continue;
       var regexp2 = new RegExp(regexp);
       var start = textNode.data.search(regexp2);
@@ -201,7 +201,7 @@ function init(options) {
   function processSearchWithOptions(blur_unless_found) {
     return processSearch(search, { 
       case_sensitive: options["case_sensitive"], 
-      search_only_links: (search.mode == 2),
+      search_only_links: (search.mode == 'links'),
       blur_unless_found: blur_unless_found
     });    
   }
@@ -248,10 +248,8 @@ function init(options) {
       var old_text = search.text;
       var add = true; 
       if (!search.mode) {
-        if (options.main_search_only_links)  
-          search.mode = (ascii == "'") ? 1 : 2;
-        else
-          search.mode = (ascii == "'") ? 2 : 1;
+        var only_links = options.main_search_only_links;
+        search.mode = ((ascii == "'") ^ only_links) ? 'links' : 'text';
         if (ascii == "'")
           add = false;
       }
