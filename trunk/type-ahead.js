@@ -38,12 +38,17 @@ var styles = '\
     clear: both !important;\
     overflow: hidden !important;\
     font-size: 18px !important;\
-    font-family: Verdana, Georgia, Serif;\
+    font-family: Arial, Verdana, Georgia, Serif;\
     white-space: pre-wrap !important;\
     min-width: 60px;\
     outline: 0 !important;\
     -webkit-box-shadow: 0px 2px 8px rgba(0,0,0,0.2);\
     -moz-box-shadow: 0px 2px 8px rgba(0,0,0,0.3);\
+  }\
+  \
+  #type-ahead-box small {\
+    letter-spacing: -0.12em;\
+    color: #444;\
   }'
 
 function addStyle(css) {
