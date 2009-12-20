@@ -166,6 +166,7 @@ function processSearch(search, options) {
         matchedElements[index].anchor.focus();
       else
         scrollToElement(node.parentNode);
+      //console.log(node.parentNode);
       var option = up(node.parentNode, 'option');
       if (option) {
         option.selected = 'selected';
@@ -195,6 +196,7 @@ function init(options) {
     "escape": 27,
     "g": 71,
     "f3": 114,
+    "f4": 115,
   };
 
   function clearSearch() {
@@ -232,6 +234,11 @@ function init(options) {
     } else if (code == keycodes.enter && selectedAnchor) {
       clearSearch();
       return;
+    // This could be enabled when a not-found string is implemented.
+/*    } else if (code == keycodes.f4 && search.mode) {
+      search.mode = (search.mode == 'text') ? 'links' : 'text'
+      processSearchWithOptions(true);
+      showSearchBox(search);*/
     } else if (search.text && (code == keycodes.f3 ||
                               (code == keycodes.g && ev.ctrlKey))) { 
       search.index += ev.shiftKey ? -1 : +1;
