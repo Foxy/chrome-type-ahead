@@ -184,9 +184,10 @@ function init(options) {
     "tab": 9,
     "enter": 13,
     "spacebar": 32,
-    "escape": 27
+    "escape": 27,
+    "g": 71,
+    "f3": 114,
   };
-  var search = {mode: null, text: '', index: 0, matches: 0, total: 0}; 
 
   function clearSearch() {
     search = {mode: null, text: '', index: 0, matches: 0, total: 0}; 
@@ -195,7 +196,7 @@ function init(options) {
     clearSearchBox();
   }
   
-  //clearSearch();    
+  clearSearch();    
    
   function processSearchWithOptions(blur_unless_found) {
     return processSearch(search, { 
@@ -210,7 +211,8 @@ function init(options) {
       return;      
       
     var code = ev.keyCode;
-    var selectedAnchor = getSelectedAnchor();    
+    var selectedAnchor = getSelectedAnchor();
+    console.log(code+"-"+   ev.ctrlKey); 
         
     if (code == keycodes.backspace && search.mode) {
       if (search.text) {
@@ -223,7 +225,8 @@ function init(options) {
     } else if (code == keycodes.enter && selectedAnchor) {
       clearSearch();
       return;
-    } else if (code == keycodes.tab && search.text) {
+    } else if (search.text && (code == keycodes.f3 ||
+                              (code == keycodes.g && ev.ctrlKey))) { 
       search.index += ev.shiftKey ? -1 : +1;
       processSearchWithOptions(true);
       showSearchBox(search);
@@ -241,7 +244,7 @@ function init(options) {
     var code = ev.keyCode;
     var ascii = String.fromCharCode(code);
     
-    if (!ev.altKey && !ev.metaKey && !ev.controlKey && ascii && 
+    if (!ev.altKey && !ev.metaKey && !ev.ctrlKey && ascii && 
         (code != keycodes.spacebar || search.mode)) {
       var old_text = search.text;
       var add = true; 
