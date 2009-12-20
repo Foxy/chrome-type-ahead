@@ -5,7 +5,7 @@
       function feedback() {
         // Update status to let user know options were saved.
         var status = document.getElementById("status");
-        status.innerHTML = "Options Saved.";
+        status.innerHTML = "<i>options saved</i>";
         setTimeout(function() {
           status.innerHTML = "";
         }, 750);
@@ -30,34 +30,30 @@
   </head>
     
   <body onload="restore_options()">
-    <h1>Type-Ahead-Find - Options</h1>
-    
-    <div id="status"></div>
-    <div id="configuration">
-      <ul>
-        <li>
-          <label for="case_sensitive"> 
-            <input id="case_sensitive" type="checkbox" value="1" />
-            Case sensitive.
-          </label>
-        </li>
-        <li>
-          <label for="main_search_only_links">
-            <input id="main_search_only_links" type="checkbox" value="1" />
-            Main action matches only links.
-          </label>
-        </li>
-      </ul>
+    <h2>Options</h2>
+        
+    <div id="options">
+      <label for="case_sensitive"> 
+        <input id="case_sensitive" type="checkbox" value="1" />
+        Case sensitive
+      </label>
+      <br />
+      <label for="main_search_only_links">
+        <input id="main_search_only_links" type="checkbox" value="1" />
+        Invert modes (primary search matches only links)
+      </label>
+      <br /><br />
       <button onclick="save_options()">Save</button>
+      &nbsp;<span id="status"></span>
     </div>
 
     <hr />    
     <h2>How to use this extension</h2>
     <div id="info">
       <ul>
-        <li>Search text and links in a page as you write the string you want to seek.</li>
-        <li>Use <i>TAB</i> to switch between matched links.</li>
-        <li>Press <strong>'</strong> to activate secondary search.</li>
+        <li>Write directly the text you want to search (that's the primary search).</li>
+        <li>Press <strong>'</strong> to start the secondary search (by default, this mode matches only links).</li>
+        <li>Use <i>TAB</i> to switch between matches.</li>        
       </ul>               
     </div>    
   </body>
