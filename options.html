@@ -14,8 +14,8 @@
       function save_options() {
         var checkbox = document.getElementById("case_sensitive");
         localStorage["case_sensitive"] = checkbox.checked ? '1': '0';
-        var checkbox = document.getElementById("main_search_only_links");
-        localStorage["main_search_only_links"] = checkbox.checked ? '1': '0';
+        var checkbox = document.getElementById("main_search_links");
+        localStorage["main_search_links"] = checkbox.checked ? '1': '0';
         feedback();
       }
 
@@ -23,8 +23,8 @@
       function restore_options() {
         var checkbox = document.getElementById("case_sensitive");
         checkbox.checked = localStorage["case_sensitive"] == '1';
-        var checkbox = document.getElementById("main_search_only_links");
-        checkbox.checked = localStorage["main_search_only_links"] == '1';
+        var checkbox = document.getElementById("main_search_links");
+        checkbox.checked = localStorage["main_search_links"] == '1';
       }      
     </script>
   </head>
@@ -38,9 +38,9 @@
         Case sensitive
       </label>
       <br />
-      <label for="main_search_only_links">
-        <input id="main_search_only_links" type="checkbox" value="1" />
-        Invert modes (primary search matches only links)
+      <label for="main_search_links">
+        <input id="main_search_links" type="checkbox" value="1" />
+        Invert modes (primary search matches links)
       </label>
       <br /><br />
       <button onclick="save_options()">Save</button>
@@ -52,8 +52,8 @@
     <div id="info">
       <ul>
         <li>Write directly the text you want to search (that's the primary search).</li>
-        <li>Press <strong>'</strong> to start the secondary search (by default, this mode matches only links).</li>
-        <li>Use <i>TAB</i> to switch between matches.</li>        
+        <li>Press <strong>'</strong> to start the secondary search (by default, this mode matches links).</li>
+        <li>Use <i>F3</i> or <i>Control+G</i> to switch between matches.</li>        
       </ul>               
     </div>    
   </body>
