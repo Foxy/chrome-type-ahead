@@ -74,8 +74,13 @@ function up(element, tagName) {
   return element;
 }
 
-function getStyle(el, styleProp) {
-  return document.defaultView.getComputedStyle(el, null).getPropertyValue(styleProp);
+function isVisible(element) {
+  while (element) {
+    if (element.style && element.style.display == 'none')
+      return false;
+    element = element.parentNode;
+  }
+  return true;
 }
 
 function scrollToElement(element) {
@@ -144,7 +149,7 @@ function processSearch(search, options) {
     );    
 
     while ((textNode = nodeIterator.nextNode()) != null) {
-      if (getStyle(textNode.parentNode, 'display') == 'none')
+      if (!isVisible(textNode.parentNode))
         continue;
       var anchor = up(textNode, 'a');
       if (search.mode == 'links' && !anchor)
