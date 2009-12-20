@@ -102,6 +102,10 @@ function clearSearchBox() {
 }
 
 function showSearchBox(search) {
+  var colors = {
+    text: {ok: '#FFD', ko: '#FDD'},
+    links: {ok: '#DDF', ko: '#FDF'},
+  }
   var box = document.getElementById('type-ahead-box');
   if (!box) { 
     box = document.createElement('TABOX');
@@ -110,7 +114,7 @@ function showSearchBox(search) {
     addStyle(styles);
   }
   box.style.display = 'block';
-  var color = (search.mode == 'text') ? '#FFD' : '#DDF'; 
+  var color = colors[search.mode][(search.total < 1 && search.text) ? 'ko' : 'ok'] 
   box.style['background-color'] = color;
   box.innerHTML = search.text ? 
     (search.text + ' <small>(' + search.nmatch + ' of ' + search.total + ')</small>') : '&nbsp;';
@@ -155,8 +159,9 @@ function processSearch(search, options) {
       }
     }
     
+    search.total = matchedElements.length;
+
     if (matchedElements.length > 0) {
-      search.total = matchedElements.length;
       var index = search.index % matchedElements.length;
       if (index < 0)
         index += matchedElements.length;
@@ -177,6 +182,8 @@ function processSearch(search, options) {
       range.setEnd(node, matchedElements[index].end);
       selection.addRange(range);
       selected = true;
+    } else {
+      search.nmatch = 0;    
     } 
   } else {
     selection.removeAllRanges();
@@ -234,11 +241,11 @@ function init(options) {
     } else if (code == keycodes.enter && selectedAnchor) {
       clearSearch();
       return;
-    // This could be enabled when a not-found string is implemented.
-/*    } else if (code == keycodes.f4 && search.mode) {
+    } else if (code == keycodes.f4 && search.mode) {
       search.mode = (search.mode == 'text') ? 'links' : 'text'
+      search.index = 0;
       processSearchWithOptions(true);
-      showSearchBox(search);*/
+      showSearchBox(search);
     } else if (search.text && (code == keycodes.f3 ||
                               (code == keycodes.g && ev.ctrlKey))) { 
       search.index += ev.shiftKey ? -1 : +1;
@@ -260,7 +267,6 @@ function init(options) {
     
     if (!ev.altKey && !ev.metaKey && !ev.ctrlKey && ascii && 
         (code != keycodes.spacebar || search.mode)) {
-      var old_text = search.text;
       var add = true; 
       if (!search.mode) {
         search.mode = ((ascii == "'") ^ options.main_search_links) ? 'links' : 'text';
@@ -269,8 +275,7 @@ function init(options) {
       }
       if (add) 
         search.text += ascii;
-      if (!processSearchWithOptions(false))
-        search.text = old_text;
+      processSearchWithOptions(false)
       showSearchBox(search);
       if (code == keycodes.spacebar) {
         ev.preventDefault();
