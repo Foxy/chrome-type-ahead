@@ -1,3 +1,10 @@
+chrome-type-ahead (0.0.5) unstable; urgency=low
+
+  * Search text inside select options 
+  * Refactor styles
+
+ --  <tokland@gmail.com>  Sun, 20 Dec 2009 14:29:41 +0100
+
 chrome-type-ahead (0.0.4) unstable; urgency=low
 
   * Fix text search
