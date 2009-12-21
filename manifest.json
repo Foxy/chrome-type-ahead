@@ -9,7 +9,7 @@
   ],
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*", "ftp://*/*"],
+      "matches": ["http://*/*", "https://*/*", "ftp://*/*", "http://*/*"],
       "js": ["type-ahead.js"]
     }
   ],
