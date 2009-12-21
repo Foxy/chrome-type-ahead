@@ -284,7 +284,7 @@ function init(options) {
       }
       if (add) 
         search.text += ascii;
-      processSearchWithOptions(false)
+      processSearchWithOptions(true)
       showSearchBox(search);
       if (code == keycodes.spacebar) {
         ev.preventDefault();
