@@ -1,3 +1,10 @@
+chrome-type-ahead (0.0.6) unstable; urgency=low
+
+  * F3/Control+G to search next
+  * F4 to switch modes 
+
+ --  <tokland@gmail.com>  Mon, 21 Dec 2009 21:14:11 +0100
+
 chrome-type-ahead (0.0.5) unstable; urgency=low
 
   * Search text inside select options 
