@@ -191,6 +191,7 @@ function processSearch(search, options) {
       selected = true;
     } else {
       search.nmatch = 0;    
+      selection.removeAllRanges();
     } 
   } else {
     selection.removeAllRanges();
