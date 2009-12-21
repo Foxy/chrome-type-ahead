@@ -1,7 +1,7 @@
 {
   "name": "Type-ahead-find",
   "description": "Search for links when you start typing",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "background_page": "background.html",
   "options_page": "options.html",
    "permissions": [
