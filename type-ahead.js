@@ -71,7 +71,8 @@ function up(element, tagName) {
 
 function isVisible(element) {
   while (element) {
-    if (element.style && element.style.display == 'none')
+    style = window.getComputedStyle(element);
+    if (style && style.getPropertyValue('display') == 'none')
       return false;
     element = element.parentNode;
   }
@@ -329,18 +330,17 @@ function init(options) {
       }        
     }, false);
  
-    if (rootNode != window) { 
-      rootNode.addEventListener('mousedown', function(ev) {
-        if (search.mode)
-          clearSearch();      
-      }, false);
-    }
+    var mouseNode = (rootNode != window) ? rootNode : document.body
+    mouseNode.addEventListener('mousedown', function(ev) {
+      if (search.mode)
+        clearSearch();      
+    }, false);
   }
   
   var rootNodes = [window].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {
     var rootNode = rootNodes[i];
-    if (rootNode != window) { 
+    if (rootNode.contentDocument) { 
       rootNode.addEventListener('load', function(ev) {
         setEvents(ev.target.contentDocument.body);
       });
