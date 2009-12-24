@@ -61,11 +61,6 @@ function addStyle(css) {
   }
 }
     
-function getSelectedAnchor() {
-  if (document.activeElement.tagName == "A")
-    return(document.activeElement);
-}
-
 function up(element, tagName) {
   var upTagName = tagName.toUpperCase();
   while (element && (!element.tagName || element.tagName.toUpperCase() != upTagName)) {
@@ -82,6 +77,33 @@ function isVisible(element) {
   }
   return true;
 }
+
+function getRootNodes() {  
+  var rootNodes = new Array();
+  var frames = document.getElementsByTagName('frame');
+  for (var i = 0; i < frames.length; i++)
+    rootNodes.push(frames[i]);
+  return rootNodes;
+}
+
+function clearRanges() {
+  var rootNodes = [window].concat(getRootNodes());
+  for (var i = 0; i < rootNodes.length; i++) {
+    var w = rootNodes[i].contentDocument || rootNodes[i]; 
+    var selection = w.getSelection();    
+    selection.removeAllRanges();
+  }
+}
+
+function getSelectedAnchor() {
+  var rootNodes = [document].concat(getRootNodes());
+  for (var i = 0; i < rootNodes.length; i++) {
+    var doc = rootNodes[i].contentDocument || rootNodes[i];  
+    if (doc.activeElement.tagName == "A")
+      return(doc.activeElement);
+  }
+}
+
 
 function scrollToElement(element) {
   var selectedPosX = 0;
@@ -128,7 +150,6 @@ function showSearchBox(search) {
 function processSearch(search, options) {
   var selected = false;    
   var selectedAnchor = getSelectedAnchor();
-  var selection = window.getSelection();
   
   if (search.text.length > 0) {  
     var matchedElements = [];
@@ -136,33 +157,42 @@ function processSearch(search, options) {
     var regexp =  new RegExp(string, options.case_sensitive ? 'g' : 'ig')
     // thix xpath does not support matches :-(
     // document.evaluate('//a//*[matches(text(),"regexp")]', document.body, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(N);
-    var nodeIterator = document.createNodeIterator(
-      document.body,
-      NodeFilter.SHOW_TEXT,
-      { 
-        acceptNode: function (node) {
-          return regexp.test(node.data) ? 
-            NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-        }
-      },
-      true
-    );    
+    var rootNodes = new Array(window);
+    var frames = document.getElementsByTagName('frame');
+    for (var i = 0; i < frames.length; i++)
+      rootNodes.push(frames[i]);
+    for (var i = 0; i < rootNodes.length; i++) {
+      var doc = rootNodes[i].document || rootNodes[i].contentDocument;
+      var frame = rootNodes[i].contentWindow || rootNodes[i];
+    
+      var nodeIterator = doc.createNodeIterator(
+        doc.body,
+        NodeFilter.SHOW_TEXT,
+        { 
+          acceptNode: function (node) {
+            return regexp.test(node.data) ? 
+              NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+          }
+        },
+        true
+      );    
 
-    while ((textNode = nodeIterator.nextNode()) != null) {
-      if (!isVisible(textNode.parentNode))
-        continue;
-      if (up(textNode, 'script'))
-        continue;
-      var anchor = up(textNode, 'a');
-      if (search.mode == 'links' && !anchor)
-        continue;
-      var regexp2 = new RegExp(regexp);
-      var start = textNode.data.search(regexp2);
-      if (start >= 0) {
-        regexp2.exec(textNode.data);
-        var end = regexp2.lastIndex;
-        var result = {node: textNode, anchor: anchor, start: start, end: end};
-        matchedElements.push(result);
+      while ((textNode = nodeIterator.nextNode()) != null) {
+        if (!isVisible(textNode.parentNode))
+          continue;
+        if (up(textNode, 'script'))
+          continue;
+        var anchor = up(textNode, 'a');
+        if (search.mode == 'links' && !anchor)
+          continue;
+        var regexp2 = new RegExp(regexp);
+        var start = textNode.data.search(regexp2);
+        if (start >= 0) {
+          regexp2.exec(textNode.data);
+          var end = regexp2.lastIndex;
+          var result = {doc: doc, frame: frame, node: textNode, anchor: anchor, start: start, end: end};
+          matchedElements.push(result);
+        }
       }
     }
     
@@ -174,27 +204,29 @@ function processSearch(search, options) {
         index += matchedElements.length;
       search.nmatch = index + 1;      
       var node = matchedElements[index].node;
+      var frame = matchedElements[index].frame;
       if (matchedElements[index].anchor)
         matchedElements[index].anchor.focus();
       else
         scrollToElement(node.parentNode);
-      //console.log(node.parentNode);
       var option = up(node.parentNode, 'option');
       if (option) {
         option.selected = 'selected';
       }        
-      selection.removeAllRanges();
-      var range = document.createRange();
+      clearRanges();
+      var doc = matchedElements[index].doc;
+      var range = doc.createRange();
       range.setStart(node, matchedElements[index].start);
       range.setEnd(node, matchedElements[index].end);
+      var selection = window.getSelection();
       selection.addRange(range);
       selected = true;
     } else {
       search.nmatch = 0;    
-      selection.removeAllRanges();
+      clearRanges();
     } 
   } else {
-    selection.removeAllRanges();
+    clearRanges();
   }
   if (selectedAnchor && !selected && options.blur_unless_found)
     selectedAnchor.blur();
@@ -230,83 +262,87 @@ function init(options) {
       blur_unless_found: blur_unless_found
     });    
   }
- 
-  window.addEventListener('keydown', function(ev) {
-    if (isInputElementActive())
-      return;      
-      
-    var code = ev.keyCode;
-    var selectedAnchor = getSelectedAnchor();
+  
+  var rootNodes = [window].concat(getRootNodes());
+  for (var i = 0; i < rootNodes.length; i++) {
+    var rootNode = rootNodes[i];
+    if (rootNode.contentDocument)
+      rootNode = rootNode.contentDocument.body;
+    rootNode.addEventListener('keydown', function(ev) {
+      if (isInputElementActive())
+        return;      
         
-    if (code == keycodes.backspace && search.mode) {
-      if (search.text) {
-        search.text = search.text.substr(0, search.text.length-1);
+      var code = ev.keyCode;
+      var selectedAnchor = getSelectedAnchor();
+          
+      if (code == keycodes.backspace && search.mode) {
+        if (search.text) {
+          search.text = search.text.substr(0, search.text.length-1);
+          processSearchWithOptions(true);
+          showSearchBox(search);
+        }
+      } else if (code == keycodes.escape) {
+        clearSearch();
+      } else if (code == keycodes.enter && selectedAnchor) {
+        clearSearch();
+        return;
+      } else if (code == keycodes.f4 && search.mode) {
+        search.mode = (search.mode == 'text') ? 'links' : 'text'
+        search.index = 0;
         processSearchWithOptions(true);
         showSearchBox(search);
+      } else if (search.text && (code == keycodes.f3 ||
+                                (code == keycodes.g && ev.ctrlKey))) { 
+        search.index += ev.shiftKey ? -1 : +1;
+        processSearchWithOptions(true);
+        showSearchBox(search);
+      } else {
+        return;
       }
-    } else if (code == keycodes.escape) {
-      clearSearch();
-    } else if (code == keycodes.enter && selectedAnchor) {
-      clearSearch();
-      return;
-    } else if (code == keycodes.f4 && search.mode) {
-      search.mode = (search.mode == 'text') ? 'links' : 'text'
-      search.index = 0;
-      processSearchWithOptions(true);
-      showSearchBox(search);
-    } else if (search.text && (code == keycodes.f3 ||
-                              (code == keycodes.g && ev.ctrlKey))) { 
-      search.index += ev.shiftKey ? -1 : +1;
-      processSearchWithOptions(true);
-      showSearchBox(search);
-    } else {
-      return;
-    }
+      
+      ev.preventDefault();
+      ev.stopPropagation();
+    }, false);
     
-    ev.preventDefault();
-    ev.stopPropagation();
-  }, false);
+    rootNode.addEventListener('keypress', function(ev) {
+      if (isInputElementActive())
+        return;
+      var code = ev.keyCode;
+      var ascii = String.fromCharCode(code);
+      
+      if (!ev.altKey && !ev.metaKey && !ev.ctrlKey && 
+          ascii && code != keycodes.enter &&
+          (code != keycodes.spacebar || search.mode)) {
+        var add = true; 
+        if (!search.mode) {
+          search.mode = ((ascii == "'") ^ options.main_search_links) ? 'links' : 'text';
+          if (ascii == "'")
+            add = false;
+        }
+        if (add) 
+          search.text += ascii;
+        processSearchWithOptions(true)
+        showSearchBox(search);
+        if (code == keycodes.spacebar) {
+          ev.preventDefault();
+          ev.stopPropagation();
+        }
+      }        
+    }, false);
   
-  window.addEventListener('keypress', function(ev) {
-    if (isInputElementActive())
-      return;
-    var code = ev.keyCode;
-    var ascii = String.fromCharCode(code);
-    
-    if (!ev.altKey && !ev.metaKey && !ev.ctrlKey && 
-        ascii && code != keycodes.enter &&
-        (code != keycodes.spacebar || search.mode)) {
-      var add = true; 
-      if (!search.mode) {
-        search.mode = ((ascii == "'") ^ options.main_search_links) ? 'links' : 'text';
-        if (ascii == "'")
-          add = false;
-      }
-      if (add) 
-        search.text += ascii;
-      processSearchWithOptions(true)
-      showSearchBox(search);
-      if (code == keycodes.spacebar) {
-        ev.preventDefault();
-        ev.stopPropagation();
-      }
-    }        
-  }, false);
-  
-  document.body.addEventListener('mousedown', function(ev) {
-    if (search.mode)
-      clearSearch();      
-  }, false);  
+    rootNode.addEventListener('mousedown', function(ev) {
+      if (search.mode)
+        clearSearch();      
+    }, false);
+  }  
 }
 
-/*  
-var options = {
-*/
-
+/* Default options */
 var options = {
   case_sensitive: false,
   main_search_links: false
 };
+
 
 if (chrome.extension) {
   chrome.extension.sendRequest({'get_options': true}, function(response) {
@@ -317,6 +353,7 @@ if (chrome.extension) {
     init(options);
   });
 } else {
+  // This code works also as stand-alone script
   window.addEventListener('load', function(ev) {
     init(options);
   });
