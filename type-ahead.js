@@ -151,6 +151,9 @@ function processSearch(search, options) {
   var selected = false;    
   var selectedAnchor = getSelectedAnchor();
   
+  if (selectedAnchor)
+    selectedAnchor.blur();
+  
   if (search.text.length > 0) {  
     var matchedElements = [];
     var string = search.text.replace(/\s+/g, "(\\s|\240)+");
@@ -228,8 +231,8 @@ function processSearch(search, options) {
   } else {
     clearRanges();
   }
-  if (selectedAnchor && !selected && options.blur_unless_found)
-    selectedAnchor.blur();
+  //if (selectedAnchor && !selected && options.blur_unless_found)
+  //    selectedAnchor.blur();
   
   return(selected);
 }
@@ -263,11 +266,12 @@ function init(options) {
     });    
   }
   
-  var rootNodes = [window].concat(getRootNodes());
+  var rootNodes = [document.body].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {
     var rootNode = rootNodes[i];
     if (rootNode.contentDocument)
       rootNode = rootNode.contentDocument.body;
+      
     rootNode.addEventListener('keydown', function(ev) {
       if (isInputElementActive())
         return;      
@@ -329,11 +333,13 @@ function init(options) {
         }
       }        
     }, false);
-  
-    rootNode.addEventListener('mousedown', function(ev) {
-      if (search.mode)
-        clearSearch();      
-    }, false);
+ 
+    if (rootNode != window) { 
+      rootNode.addEventListener('mousedown', function(ev) {
+        if (search.mode)
+          clearSearch();      
+      }, false);
+    }
   }  
 }
 
