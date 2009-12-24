@@ -265,13 +265,8 @@ function init(options) {
       blur_unless_found: blur_unless_found
     });    
   }
-  
-  var rootNodes = [document.body].concat(getRootNodes());
-  for (var i = 0; i < rootNodes.length; i++) {
-    var rootNode = rootNodes[i];
-    if (rootNode.contentDocument)
-      rootNode = rootNode.contentDocument.body;
-      
+
+  function setEvents(rootNode) {
     rootNode.addEventListener('keydown', function(ev) {
       if (isInputElementActive())
         return;      
@@ -340,6 +335,18 @@ function init(options) {
           clearSearch();      
       }, false);
     }
+  }
+  
+  var rootNodes = [window].concat(getRootNodes());
+  for (var i = 0; i < rootNodes.length; i++) {
+    var rootNode = rootNodes[i];
+    if (rootNode != window) { 
+      rootNode.addEventListener('load', function(ev) {
+        setEvents(ev.target.contentDocument.body);
+      });
+    }
+    if (!rootNode.contentDocument || rootNode.contentDocument.readyState == 'complete')
+      setEvents(rootNode.contentDocument ? rootNode.contentDocument.body : rootNode);
   }  
 }
 
