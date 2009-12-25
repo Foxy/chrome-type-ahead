@@ -1,3 +1,9 @@
+chrome-type-ahead (0.0.8) unstable; urgency=low
+
+  * Fire onchange events when option select is activated (enter key)
+
+ --  <tokland@gmail.com>  Fri, 25 Dec 2009 20:34:30 +0100
+
 chrome-type-ahead (0.0.7) unstable; urgency=low
 
   * Search in frames
