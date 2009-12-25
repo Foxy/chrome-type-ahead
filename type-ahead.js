@@ -90,9 +90,11 @@ function getRootNodes() {
 function clearRanges() {
   var rootNodes = [window].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {
-    var w = rootNodes[i].contentDocument || rootNodes[i]; 
-    var selection = w.getSelection();    
-    selection.removeAllRanges();
+    var w = rootNodes[i].contentDocument || rootNodes[i];
+    if (w && w.getSelection) { 
+      var selection = w.getSelection();    
+      selection.removeAllRanges();
+    }
   }
 }
 
@@ -100,7 +102,7 @@ function getSelectedAnchor() {
   var rootNodes = [document].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {
     var doc = rootNodes[i].contentDocument || rootNodes[i];  
-    if (doc.activeElement.tagName == "A")
+    if (doc.activeElement && doc.activeElement.tagName == "A")
       return(doc.activeElement);
   }
 }
@@ -117,9 +119,16 @@ function scrollToElement(element) {
   window.scrollTo(selectedPosX, selectedPosY);
 }
 
-function isInputElementActive() {
-  var name = document.activeElement.tagName;
+function isInputElementActive(doc) {
+  var name = document.activeElement && document.activeElement.tagName;
   return (name == "INPUT" || name == "SELECT" || name == "TEXTAREA");
+}
+
+function selectOnchange(select) { 
+  if (select && select.onchange) {
+    select.onchange();
+    return true;
+  }
 }
 
 function clearSearchBox() {
@@ -165,8 +174,10 @@ function processSearch(search, options) {
     var frames = document.getElementsByTagName('frame');
     for (var i = 0; i < frames.length; i++)
       rootNodes.push(frames[i]);
-    for (var i = 0; i < rootNodes.length; i++) {
+    for (var i = 0; i < rootNodes.length; i++) {    
       var doc = rootNodes[i].document || rootNodes[i].contentDocument;
+      if (!doc)
+        continue;
       var frame = rootNodes[i].contentWindow || rootNodes[i];
     
       var nodeIterator = doc.createNodeIterator(
@@ -216,7 +227,10 @@ function processSearch(search, options) {
       var option = up(node.parentNode, 'option');
       if (option) {
         option.selected = 'selected';
-      }        
+        search.select = up(option, 'select');
+      } else {
+        search.select = null;
+      }
       clearRanges();
       var doc = matchedElements[index].doc;
       var range = doc.createRange();
@@ -251,7 +265,7 @@ function init(options) {
   };
 
   function clearSearch() {
-    search = {mode: null, text: '', index: 0, matches: 0, total: 0}; 
+    search = {mode: null, text: '', index: 0, matches: 0, total: 0, select: null}; 
     selection = window.getSelection();
     selection.removeAllRanges();
     clearSearchBox();
@@ -283,7 +297,7 @@ function init(options) {
         }
       } else if (code == keycodes.escape) {
         clearSearch();
-      } else if (code == keycodes.enter && selectedAnchor) {
+      } else if (code == keycodes.enter && (selectedAnchor || selectOnchange(search.select))) {
         clearSearch();
         return;
       } else if (code == keycodes.f4 && search.mode) {
