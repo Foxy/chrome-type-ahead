@@ -107,7 +107,6 @@ function getSelectedAnchor() {
   }
 }
 
-
 function scrollToElement(element) {
   var selectedPosX = 0;
   var selectedPosY = 0;              
@@ -248,8 +247,6 @@ function processSearch(search, options) {
   } else {
     clearRanges();
   }
-  //if (selectedAnchor && !selected && options.blur_unless_found)
-  //    selectedAnchor.blur();
   
   return(selected);
 }
