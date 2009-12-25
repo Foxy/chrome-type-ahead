@@ -124,9 +124,11 @@ function isInputElementActive(doc) {
   return (name == "INPUT" || name == "SELECT" || name == "TEXTAREA");
 }
 
-function selectOnchange(select) { 
-  if (select && select.onchange) {
-    select.onchange();
+function selectOnchange(select) {
+  if (select) {
+    select.focus(); 
+    if (select.onchange) 
+      select.onchange();
     return true;
   }
 }
