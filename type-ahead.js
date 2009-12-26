@@ -263,14 +263,14 @@ function init(options) {
     "f4": 115,
   };
 
-  function clearSearch() {
-    search = {mode: null, text: '', index: 0, matches: 0, total: 0, select: null}; 
-    selection = window.getSelection();
-    selection.removeAllRanges();
+  function clearSearch(clearRanges) {
+    search = {mode: null, text: '', index: 0, matches: 0, total: 0, select: null};
+    if (clearRanges) { 
+      selection = window.getSelection();
+      selection.removeAllRanges();
+    }
     clearSearchBox();
   }
-  
-  clearSearch();    
    
   function processSearchWithOptions(blur_unless_found) {
     return processSearch(search, { 
@@ -295,9 +295,9 @@ function init(options) {
           showSearchBox(search);
         }
       } else if (code == keycodes.escape) {
-        clearSearch();
+        clearSearch(false);
       } else if (code == keycodes.enter && (selectedAnchor || selectOnchange(search.select))) {
-        clearSearch();
+        clearSearch(true);
         return;
       } else if (code == keycodes.f4 && search.mode) {
         search.mode = (search.mode == 'text') ? 'links' : 'text'
@@ -317,6 +317,7 @@ function init(options) {
       ev.stopPropagation();
     }, false);
     
+    clearSearch(false);    
     rootNode.addEventListener('keypress', function(ev) {
       if (isInputElementActive())
         return;
@@ -346,7 +347,7 @@ function init(options) {
     var mouseNode = (rootNode != window) ? rootNode : document.body
     mouseNode.addEventListener('mousedown', function(ev) {
       if (search.mode)
-        clearSearch();      
+        clearSearch(false);      
     }, false);
   }
   
