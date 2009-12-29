@@ -119,7 +119,8 @@ function scrollToElement(element) {
 }
 
 function isInputElementActive(doc) {
-  var name = document.activeElement && document.activeElement.tagName;
+  //var name = document.activeElement && document.activeElement.tagName;
+  var name = document.activeElement.tagName.toUpperCase();
   return (name == "INPUT" || name == "SELECT" || name == "TEXTAREA");
 }
 
@@ -346,7 +347,22 @@ function init(options) {
         clearSearch(false);      
     }, false);
   }
-  
+
+  function dom_trackActiveElement(evt) {
+    if (evt && evt.target) { 
+      document.activeElement = evt.target == document ? null : evt.target;
+    }
+  }
+
+  function dom_trackActiveElementLost(evt) { 
+    document.activeElement = null;
+  }
+
+  if (!document.activeElement) {
+    document.addEventListener("focus", dom_trackActiveElement, true);
+    document.addEventListener("blur", dom_trackActiveElementLost, true);
+  }
+
   var rootNodes = [window].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {
     var rootNode = rootNodes[i];
