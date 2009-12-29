@@ -166,15 +166,12 @@ function processSearch(search, options) {
     selectedAnchor.blur();
   
   if (search.text.length > 0) {  
-    var matchedElements = [];
+    var matchedElements = new Array();
     var string = search.text.replace(/\s+/g, "(\\s|\240)+");
     var regexp =  new RegExp(string, options.case_sensitive ? 'g' : 'ig')
     // thix xpath does not support matches :-(
     // document.evaluate('//a//*[matches(text(),"regexp")]', document.body, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(N);
-    var rootNodes = new Array(window);
-    var frames = document.getElementsByTagName('frame');
-    for (var i = 0; i < frames.length; i++)
-      rootNodes.push(frames[i]);
+    var rootNodes = [window].concat(getRootNodes());
     for (var i = 0; i < rootNodes.length; i++) {    
       var doc = rootNodes[i].document || rootNodes[i].contentDocument;
       if (!doc)
@@ -206,7 +203,8 @@ function processSearch(search, options) {
         if (start >= 0) {
           regexp2.exec(textNode.data);
           var end = regexp2.lastIndex;
-          var result = {doc: doc, frame: frame, node: textNode, anchor: anchor, start: start, end: end};
+          var result = {doc: doc, frame: frame, node: textNode, 
+                        anchor: anchor, start: start, end: end};
           matchedElements.push(result);
         }
       }
@@ -219,13 +217,12 @@ function processSearch(search, options) {
       if (index < 0)
         index += matchedElements.length;
       search.nmatch = index + 1;      
-      var node = matchedElements[index].node;
-      var frame = matchedElements[index].frame;
-      if (matchedElements[index].anchor)
-        matchedElements[index].anchor.focus();
+      var result = matchedElements[index];
+      if (result.anchor)
+        result.anchor.focus();
       else
-        scrollToElement(node.parentNode);
-      var option = up(node.parentNode, 'option');
+        scrollToElement(result.node.parentNode);
+      var option = up(result.node.parentNode, 'option');
       if (option) {
         option.selected = 'selected';
         search.select = up(option, 'select');
@@ -233,10 +230,9 @@ function processSearch(search, options) {
         search.select = null;
       }
       clearRanges();
-      var doc = matchedElements[index].doc;
-      var range = doc.createRange();
-      range.setStart(node, matchedElements[index].start);
-      range.setEnd(node, matchedElements[index].end);
+      var range = result.doc.createRange();
+      range.setStart(result.node, result.start);
+      range.setEnd(result.node, result.end);
       var selection = window.getSelection();
       selection.addRange(range);
       selected = true;
