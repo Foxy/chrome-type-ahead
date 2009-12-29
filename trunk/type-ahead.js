@@ -120,7 +120,7 @@ function scrollToElement(element) {
 
 function isInputElementActive(doc) {
   //var name = document.activeElement && document.activeElement.tagName;
-  var name = document.activeElement.tagName.toUpperCase();
+  var name = document.activeElement && document.activeElement.tagName.toUpperCase();
   return (name == "INPUT" || name == "SELECT" || name == "TEXTAREA");
 }
 
