@@ -255,6 +255,8 @@ function init(options) {
     "enter": 13,
     "spacebar": 32,
     "escape": 27,
+    "n": 78,
+    "p": 80,
     "g": 71,
     "f3": 114,
     "f4": 115,
@@ -302,8 +304,10 @@ function init(options) {
         processSearchWithOptions(true);
         showSearchBox(search);
       } else if (search.text && (code == keycodes.f3 ||
-                                (code == keycodes.g && ev.ctrlKey))) { 
-        search.index += ev.shiftKey ? -1 : +1;
+                                (code == keycodes.g && ev.ctrlKey) ||
+                                (code == keycodes.n && ev.altKey) ||
+                                (code == keycodes.p && ev.altKey))) { 
+        search.index += (ev.shiftKey || code == keycodes.p) ? -1 : +1;
         processSearchWithOptions(true);
         showSearchBox(search);
       } else {
