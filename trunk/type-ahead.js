@@ -166,7 +166,7 @@ function processSearch(search, options) {
   if (selectedAnchor)
     selectedAnchor.blur();
   
-  if (search.text.length<= 0) {
+  if (search.text.length <= 0 || !search.mode) {
     clearRanges();
     return(selected);
   }
@@ -199,9 +199,14 @@ function processSearch(search, options) {
         continue;
       else if (!isVisible(textNode.parentNode))
         continue;
-      else if (up(textNode, 'script'))
+      else if (up(textNode.parentNode, 'script'))
         continue;
-      var result = {doc: doc, frame: frame, node: textNode, anchor: anchor};
+      var option = up(textNode.parentNode, 'option');
+      console.log(options);
+      if (option && !options.search_in_selects)
+        continue;
+      var result = {doc: doc, frame: frame, node: textNode, 
+                    anchor: anchor, option: option};
       matchedElements.push(result);
     }
   }
@@ -218,10 +223,9 @@ function processSearch(search, options) {
       result.anchor.focus();
     else
       scrollToElement(result.node.parentNode);
-    var option = up(result.node.parentNode, 'option');
-    if (option) {
-      option.selected = 'selected';
-      search.select = up(option, 'select');
+    if (result.option) {
+      result.option.selected = 'selected';
+      search.select = up(result.option, 'select');
     } else {
       search.select = null;
     }
@@ -229,7 +233,6 @@ function processSearch(search, options) {
     var range = result.doc.createRange();
     var regexp2 = new RegExp(regexp);
     var start = result.node.data.search(regexp2);
-    console.log(start);
     if (start >= 0) {
       regexp2.exec(result.node.data);
       var end = regexp2.lastIndex;
@@ -274,6 +277,7 @@ function init(options) {
     return processSearch(search, { 
       case_sensitive: options["case_sensitive"], 
       search_links: (search.mode == 'links'),
+      search_in_selects: options["search_in_selects"],
       blur_unless_found: blur_unless_found
     });    
   }
@@ -293,7 +297,8 @@ function init(options) {
           showSearchBox(search);
         }
       } else if (code == keycodes.escape) {
-        clearSearch(false);
+        clearSearch(true);
+        processSearchWithOptions(true);
       } else if (code == keycodes.enter && 
                  (selectedAnchor || selectOnchange(search.select))) {
         clearSearch(true);
@@ -383,7 +388,8 @@ function init(options) {
 /* Default options */
 var options = {
   case_sensitive: false,
-  main_search_links: false
+  main_search_links: false,
+  search_in_selects: false,
 };
 
 
@@ -391,7 +397,8 @@ if (chrome.extension) {
   chrome.extension.sendRequest({'get_options': true}, function(response) {
     options = {
       case_sensitive: (response.case_sensitive == '1'),
-      main_search_links: (response.main_search_links == '1')
+      main_search_links: (response.main_search_links == '1'),
+      search_in_selects: (response.search_in_selects == '1'),
     };
     init(options);
   });

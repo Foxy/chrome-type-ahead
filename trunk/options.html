@@ -11,18 +11,24 @@
       }
 
       function save_options() {
-        var checkbox = document.getElementById("case_sensitive");
-        localStorage["case_sensitive"] = checkbox.checked ? '1': '0';
-        var checkbox = document.getElementById("main_search_links");
-        localStorage["main_search_links"] = checkbox.checked ? '1': '0';
+        function save_boolean(name) {
+          var checkbox = document.getElementById(name);
+          localStorage[name] = checkbox.checked ? '1': '0';
+        }
+        save_boolean("case_sensitive");
+        save_boolean("main_search_links");
+        save_boolean("search_in_selects");
         feedback();
       }
 
       function restore_options() {
-        var checkbox = document.getElementById("case_sensitive");
-        checkbox.checked = localStorage["case_sensitive"] == '1';
-        var checkbox = document.getElementById("main_search_links");
-        checkbox.checked = localStorage["main_search_links"] == '1';
+        function restore_boolean(name) {
+          var checkbox = document.getElementById(name);
+          checkbox.checked = localStorage[name] == '1';
+        }
+        restore_boolean("case_sensitive");
+        restore_boolean("main_search_links");
+        restore_boolean("search_in_selects");
       }      
     </script>
   </head>
@@ -40,7 +46,13 @@
         <input id="main_search_links" type="checkbox" value="1" />
         Invert modes (primary search matches links)
       </label>
-      <br /><br />
+      <br />
+      <label for="search_in_selects"> 
+        <input id="search_in_selects" type="checkbox" value="1" />
+        Search text in select options
+      </label>
+      <br />
+      <br />
       <button onclick="save_options()">Save</button>
       &nbsp;<span id="status"></span>
     </div>
