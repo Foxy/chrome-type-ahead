@@ -295,7 +295,8 @@ function init(options) {
         }
       } else if (code == keycodes.escape) {
         clearSearch(false);
-      } else if (code == keycodes.enter && (selectedAnchor || selectOnchange(search.select))) {
+      } else if (code == keycodes.enter && 
+                 (selectedAnchor || selectOnchange(search.select))) {
         clearSearch(true);
         return;
       } else if (code == keycodes.f4 && search.mode) {
@@ -304,9 +305,9 @@ function init(options) {
         processSearchWithOptions(true);
         showSearchBox(search);
       } else if (search.text && (code == keycodes.f3 ||
-                                (code == keycodes.g && ev.ctrlKey) ||
-                                (code == keycodes.n && ev.altKey) ||
-                                (code == keycodes.p && ev.altKey))) { 
+                                 (code == keycodes.g && ev.ctrlKey) ||
+                                 (code == keycodes.n && ev.altKey) ||
+                                 (code == keycodes.p && ev.altKey))) { 
         search.index += (ev.shiftKey || code == keycodes.p) ? -1 : +1;
         processSearchWithOptions(true);
         showSearchBox(search);
