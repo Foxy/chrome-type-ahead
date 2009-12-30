@@ -70,9 +70,10 @@ function up(element, tagName) {
 }
 
 function isVisible(element) {
-  while (element) {
+  while (element) {    
     style = window.getComputedStyle(element);
-    if (style && style.getPropertyValue('display') == 'none')
+    if (style && (style.getPropertyValue('display') == 'none' ||
+                  style.getPropertyValue('visibility') == 'hidden'))
       return false;
     element = element.parentNode;
   }
@@ -202,7 +203,6 @@ function processSearch(search, options) {
       else if (up(textNode.parentNode, 'script'))
         continue;
       var option = up(textNode.parentNode, 'option');
-      console.log(options);
       if (option && !options.search_in_selects)
         continue;
       var result = {doc: doc, frame: frame, node: textNode, 
