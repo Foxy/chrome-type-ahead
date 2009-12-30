@@ -166,84 +166,83 @@ function processSearch(search, options) {
   if (selectedAnchor)
     selectedAnchor.blur();
   
-  if (search.text.length > 0) {  
-    var matchedElements = new Array();
-    var string = search.text.replace(/\s+/g, "(\\s|\240)+");
-    var regexp =  new RegExp(string, options.case_sensitive ? 'g' : 'ig')
-    // thix xpath does not support matches :-(
-    // document.evaluate('//a//*[matches(text(),"regexp")]', document.body, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(N);
-    var rootNodes = [window].concat(getRootNodes());
-    for (var i = 0; i < rootNodes.length; i++) {    
-      var doc = rootNodes[i].document || rootNodes[i].contentDocument;
-      if (!doc)
+  if (search.text.length<= 0) {
+    clearRanges();
+    return(selected);
+  }
+  
+  var matchedElements = new Array();
+  var string = search.text.replace(/\s+/g, "(\\s|\240)+");
+  var regexp =  new RegExp(string, options.case_sensitive ? 'g' : 'ig')
+  // thix xpath does not support matches :-(
+  // document.evaluate('//a//*[matches(text(),"regexp")]', document.body, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(N);
+  var rootNodes = [window].concat(getRootNodes());
+  for (var i = 0; i < rootNodes.length; i++) {    
+    var doc = rootNodes[i].document || rootNodes[i].contentDocument;
+    if (!doc)
+      continue;
+    var frame = rootNodes[i].contentWindow || rootNodes[i];
+  
+    var nodeIterator = doc.createNodeIterator(
+      doc.body,
+      NodeFilter.SHOW_TEXT,
+      function (node) {
+        return regexp.test(node.data) ? 
+          NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      },
+      true
+    );    
+
+    while ((textNode = nodeIterator.nextNode()) != null) {
+      var anchor = up(textNode, 'a');
+      if (search.mode == 'links' && !anchor)
         continue;
-      var frame = rootNodes[i].contentWindow || rootNodes[i];
-    
-      var nodeIterator = doc.createNodeIterator(
-        doc.body,
-        NodeFilter.SHOW_TEXT,
-        { 
-          acceptNode: function (node) {
-            return regexp.test(node.data) ? 
-              NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-          }
-        },
-        true
-      );    
-
-      while ((textNode = nodeIterator.nextNode()) != null) {
-        if (!isVisible(textNode.parentNode))
-          continue;
-        if (up(textNode, 'script'))
-          continue;
-        var anchor = up(textNode, 'a');
-        if (search.mode == 'links' && !anchor)
-          continue;
-        var regexp2 = new RegExp(regexp);
-        var start = textNode.data.search(regexp2);
-        if (start >= 0) {
-          regexp2.exec(textNode.data);
-          var end = regexp2.lastIndex;
-          var result = {doc: doc, frame: frame, node: textNode, 
-                        anchor: anchor, start: start, end: end};
-          matchedElements.push(result);
-        }
-      }
+      else if (!isVisible(textNode.parentNode))
+        continue;
+      else if (up(textNode, 'script'))
+        continue;
+      var result = {doc: doc, frame: frame, node: textNode, anchor: anchor};
+      matchedElements.push(result);
     }
-    
-    search.total = matchedElements.length;
+  }
+  
+  search.total = matchedElements.length;
 
-    if (matchedElements.length > 0) {
-      var index = search.index % matchedElements.length;
-      if (index < 0)
-        index += matchedElements.length;
-      search.nmatch = index + 1;      
-      var result = matchedElements[index];
-      if (result.anchor)
-        result.anchor.focus();
-      else
-        scrollToElement(result.node.parentNode);
-      var option = up(result.node.parentNode, 'option');
-      if (option) {
-        option.selected = 'selected';
-        search.select = up(option, 'select');
-      } else {
-        search.select = null;
-      }
-      clearRanges();
-      var range = result.doc.createRange();
-      range.setStart(result.node, result.start);
-      range.setEnd(result.node, result.end);
+  if (matchedElements.length > 0) {
+    var index = search.index % matchedElements.length;
+    if (index < 0)
+      index += matchedElements.length;
+    search.nmatch = index + 1;      
+    var result = matchedElements[index];
+    if (result.anchor)
+      result.anchor.focus();
+    else
+      scrollToElement(result.node.parentNode);
+    var option = up(result.node.parentNode, 'option');
+    if (option) {
+      option.selected = 'selected';
+      search.select = up(option, 'select');
+    } else {
+      search.select = null;
+    }
+    clearRanges();
+    var range = result.doc.createRange();
+    var regexp2 = new RegExp(regexp);
+    var start = result.node.data.search(regexp2);
+    console.log(start);
+    if (start >= 0) {
+      regexp2.exec(result.node.data);
+      var end = regexp2.lastIndex;
+      range.setStart(result.node, start);
+      range.setEnd(result.node, end);
       var selection = window.getSelection();
       selection.addRange(range);
       selected = true;
-    } else {
-      search.nmatch = 0;    
-      clearRanges();
-    } 
+    }    
   } else {
+    search.nmatch = 0;    
     clearRanges();
-  }
+  } 
   
   return(selected);
 }
