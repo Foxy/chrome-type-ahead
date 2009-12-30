@@ -1,3 +1,9 @@
+chrome-type-ahead (0.1) unstable; urgency=low
+
+  * First upload to official site
+
+ --  <tokland@gmail.com>  Wed, 30 Dec 2009 15:36:34 +0100
+
 chrome-type-ahead (0.0.9) unstable; urgency=low
 
   * Set manually document.activeElement
