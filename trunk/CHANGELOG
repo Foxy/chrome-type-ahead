@@ -1,3 +1,10 @@
+chrome-type-ahead (0.1.2) unstable; urgency=low
+
+  * Add option: starts_only_links
+  * Consider also 'visibility: hidden' CSS as non-matchable elements 
+
+ --  <tokland@gmail.com>  Thu, 31 Dec 2009 20:26:52 +0100
+
 chrome-type-ahead (0.1.1) unstable; urgency=low
 
   * Add option to enable/disable search in select/options 
