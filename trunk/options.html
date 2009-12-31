@@ -18,6 +18,7 @@
         save_boolean("case_sensitive");
         save_boolean("main_search_links");
         save_boolean("search_in_selects");
+        save_boolean("starts_link_only");
         feedback();
       }
 
@@ -29,6 +30,7 @@
         restore_boolean("case_sensitive");
         restore_boolean("main_search_links");
         restore_boolean("search_in_selects");
+        restore_boolean("starts_link_only");
       }      
     </script>
   </head>
@@ -50,6 +52,11 @@
       <label for="search_in_selects"> 
         <input id="search_in_selects" type="checkbox" value="1" />
         Search text in select options
+      </label>
+      <br />
+       <label for="starts_link_only"> 
+        <input id="starts_link_only" type="checkbox" value="1" />
+        Search only start of text when searching links
       </label>
       <br />
       <br />

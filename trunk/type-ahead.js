@@ -188,6 +188,8 @@ function processSearch(search, options) {
   
   var matchedElements = new Array();
   var string = search.text.replace(/\s+/g, "(\\s|\240)+");
+  if (options.starts_link_only)
+    string = '^' + string;
   var regexp =  new RegExp(string, options.case_sensitive ? 'g' : 'ig')
   // thix xpath does not support matches :-(
   // document.evaluate('//a//*[matches(text(),"regexp")]', document.body, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(N);
@@ -296,6 +298,7 @@ function init(options) {
       case_sensitive: options["case_sensitive"], 
       search_links: (search.mode == 'links'),
       search_in_selects: options["search_in_selects"],
+      starts_link_only: options["starts_link_only"],
       blur_unless_found: blur_unless_found
     });    
   }
@@ -408,6 +411,7 @@ var options = {
   case_sensitive: false,
   main_search_links: false,
   search_in_selects: false,
+  starts_link_only: false,
 };
 
 
@@ -417,6 +421,7 @@ if (chrome.extension) {
       case_sensitive: (response.case_sensitive == '1'),
       main_search_links: (response.main_search_links == '1'),
       search_in_selects: (response.search_in_selects == '1'),
+      starts_link_only: (response.starts_link_only == '1'),
     };
     init(options);
   });
