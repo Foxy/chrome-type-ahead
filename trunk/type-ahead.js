@@ -22,26 +22,26 @@
 
 var styles = '\
   #type-ahead-box {\
-    position: fixed !important;\
-    top: 0 !important;\
-    right: 0 !important;\
-    margin: 0 !important;\
-    text-align: left !important;\
-    z-index: 9999 !important;\
-    //background-color: #FFC !important;\
-    color: #000 !important;\
-    border-bottom: 1px solid #ccc !important;\
-    border-bottom: 1px solid rgba(0,0,0,0.3) !important;\
+    position: fixed;\
+    top: 0;\
+    right: 0;\
+    margin: 0;\
+    text-align: left;\
+    z-index: 9999;\
+    //background-color: #FFC;\
+    color: #000;\
+    border-bottom: 1px solid #ccc;\
+    border-bottom: 1px solid rgba(0,0,0,0.3);\
     padding: 4px 8px;\
     opacity: 0.9;\
-    float: right !important;\
-    clear: both !important;\
-    overflow: hidden !important;\
-    font-size: 18px !important;\
+    float: right;\
+    clear: both;\
+    overflow: hidden;\
+    font-size: 18px;\
     font-family: Arial, Verdana, Georgia, Serif;\
-    white-space: pre-wrap !important;\
+    white-space: pre-wrap;\
     min-width: 60px;\
-    outline: 0 !important;\
+    outline: 0;\
     -webkit-box-shadow: 0px 2px 8px rgba(0,0,0,0.2);\
     -moz-box-shadow: 0px 2px 8px rgba(0,0,0,0.3);\
   }\
@@ -108,15 +108,22 @@ function getSelectedAnchor() {
   }
 }
 
-function scrollToElement(element) {
+function getElementPosition(element) {
+  var width = element.offsetWidth;
+  var height = element.offsetHeight;
   var selectedPosX = 0;
-  var selectedPosY = 0;              
+  var selectedPosY = 0;
   while(element) {
     selectedPosX += element.offsetLeft;
     selectedPosY += element.offsetTop;
     element = element.offsetParent;
   }
-  window.scrollTo(selectedPosX, selectedPosY);
+  return {x: selectedPosX, y: selectedPosY, width: width, height: height};
+}
+
+function scrollToElement(element) {
+  var dim = getElementPosition(element);
+  window.scrollTo(dim.x, dim.y);
 }
 
 function isInputElementActive(doc) {
@@ -158,6 +165,14 @@ function showSearchBox(search) {
   box.style['background-color'] = color;
   box.innerHTML = search.text ? 
     (search.text + ' <small>(' + search.nmatch + ' of ' + search.total + ')</small>') : '&nbsp;';
+  if (search.nmatch >= 1 && search.element) {
+    var dim1 = getElementPosition(search.element);
+    var dim2 = getElementPosition(box);
+    if (dim1.x + dim1.width >= dim2.x && dim1.y <= dim2.y + dim2.height) 
+      box.style['top'] = (dim1.y + dim1.height + 10) + 'px';
+    else
+      box.style['top'] = '';
+  }
 }
 
 function processSearch(search, options) {
@@ -222,6 +237,7 @@ function processSearch(search, options) {
       index += matchedElements.length;
     search.nmatch = index + 1;      
     var result = matchedElements[index];
+    search.element = result.node.parentNode;
     if (result.anchor)
       result.anchor.focus();
     else
@@ -246,7 +262,7 @@ function processSearch(search, options) {
       selected = true;
     }    
   } else {
-    search.nmatch = 0;    
+    search.nmatch = 0;
     clearRanges();
   } 
   
