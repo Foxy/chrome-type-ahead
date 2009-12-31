@@ -183,28 +183,31 @@ function processSearch(search, options) {
     if (!doc)
       continue;
     var frame = rootNodes[i].contentWindow || rootNodes[i];
+
+    function match(textNode) {
+      if (!regexp.test(textNode.data))
+        return NodeFilter.FILTER_REJECT;
+      var anchor = up(textNode, 'a');
+      if ((search.mode == 'links' && !anchor) || 
+          !isVisible(textNode.parentNode) ||
+           up(textNode.parentNode, 'script'))
+        return NodeFilter.FILTER_REJECT;
+      var option = up(textNode.parentNode, 'option');
+      if (option && !options.search_in_selects)
+        return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT
+    }
   
     var nodeIterator = doc.createNodeIterator(
       doc.body,
       NodeFilter.SHOW_TEXT,
-      function (node) {
-        return regexp.test(node.data) ? 
-          NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-      },
+      match,
       true
     );    
 
     while ((textNode = nodeIterator.nextNode()) != null) {
       var anchor = up(textNode, 'a');
-      if (search.mode == 'links' && !anchor)
-        continue;
-      else if (!isVisible(textNode.parentNode))
-        continue;
-      else if (up(textNode.parentNode, 'script'))
-        continue;
       var option = up(textNode.parentNode, 'option');
-      if (option && !options.search_in_selects)
-        continue;
       var result = {doc: doc, frame: frame, node: textNode, 
                     anchor: anchor, option: option};
       matchedElements.push(result);
