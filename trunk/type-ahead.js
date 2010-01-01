@@ -1,5 +1,5 @@
 /*
- Chrome-type-ahead: find text as you write. 
+ Find text or links as you write. 
  
  This script is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -15,10 +15,10 @@
  along with this script.  If not, see <http://www.gnu.org/licenses/>.
  
  Website: http://code.google.com/p/chrome-type-ahead/
- Author: Arnau Sanchez <tokland@gmail.com> 
+ Author: Arnau Sanchez <tokland@gmail.com> (2009) 
 */ 
 
-/* Styles and addStyle borrowed from nice-alert.js */
+/* Styles and addStyle borrowed from nice-alert.js project */
 
 var styles = '\
   #type-ahead-box {\
@@ -63,7 +63,20 @@ function addStyle(css) {
     
 function up(element, tagName) {
   var upTagName = tagName.toUpperCase();
-  while (element && (!element.tagName || element.tagName.toUpperCase() != upTagName)) {
+  while (element && (!element.tagName || 
+                     element.tagName.toUpperCase() != upTagName)) {
+    element = element.parentNode;
+  }
+  return element;
+}
+
+function upMatch(element, matchFunction) {
+  while (element) {
+    var res = matchFunction(element);
+    if (res == null)
+      return null;
+    else if (res)
+      return element;
     element = element.parentNode;
   }
   return element;
@@ -127,9 +140,17 @@ function scrollToElement(element) {
 }
 
 function isInputElementActive(doc) {
-  //var name = document.activeElement && document.activeElement.tagName;
-  var name = document.activeElement && document.activeElement.tagName.toUpperCase();
-  return (name == "INPUT" || name == "SELECT" || name == "TEXTAREA");
+  var element = document.activeElement;
+  if (!element)
+    return;
+  var name = element.tagName.toUpperCase();
+  if (name == "INPUT" || name == "SELECT" || name == "TEXTAREA")
+    return true;
+  return (upMatch(element, function(el) {
+      if (!el.getAttribute || el.getAttribute('contenteditable') == 'false')
+        return null;
+      return (el.getAttribute('contenteditable') == 'true'); 
+    }))
 }
 
 function selectOnchange(select) {
@@ -191,8 +212,8 @@ function processSearch(search, options) {
   if (options.starts_link_only)
     string = '^' + string;
   var regexp =  new RegExp(string, options.case_sensitive ? 'g' : 'ig')
-  // thix xpath does not support matches :-(
-  // document.evaluate('//a//*[matches(text(),"regexp")]', document.body, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(N);
+  // currently Xpath does not support regexp matches :-(
+  // document.evaluate('//a//*[matches(text(), "regexp")]', document.body, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(N);
   var rootNodes = [window].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {    
     var doc = rootNodes[i].document || rootNodes[i].contentDocument;
@@ -344,7 +365,6 @@ function init(options) {
       ev.stopPropagation();
     }, false);
     
-    clearSearch(false);    
     rootNode.addEventListener('keypress', function(ev) {
       if (isInputElementActive())
         return;
@@ -393,6 +413,7 @@ function init(options) {
     document.addEventListener("blur", dom_trackActiveElementLost, true);
   }
 
+  clearSearch(false);
   var rootNodes = [window].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {
     var rootNode = rootNodes[i];
@@ -403,7 +424,7 @@ function init(options) {
     }
     if (!rootNode.contentDocument || rootNode.contentDocument.readyState == 'complete')
       setEvents(rootNode.contentDocument ? rootNode.contentDocument.body : rootNode);
-  }  
+  } 
 }
 
 /* Default options */
@@ -426,7 +447,7 @@ if (chrome.extension) {
     init(options);
   });
 } else {
-  // This code works also as stand-alone script
+  // So as to this code works also as stand-alone script
   window.addEventListener('load', function(ev) {
     init(options);
   });
