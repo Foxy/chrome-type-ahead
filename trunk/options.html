@@ -15,10 +15,15 @@
           var checkbox = document.getElementById(name);
           localStorage[name] = checkbox.checked ? '1': '0';
         }
+        function save_string(name) {
+          var field = document.getElementById(name);
+          localStorage[name] = field.value || '';
+        }
         save_boolean("case_sensitive");
         save_boolean("main_search_links");
         save_boolean("search_in_selects");
         save_boolean("starts_link_only");
+        save_string("sites_blacklist");
         feedback();
       }
 
@@ -27,10 +32,15 @@
           var checkbox = document.getElementById(name);
           checkbox.checked = localStorage[name] == '1';
         }
+        function restore_string(name) {
+          var field = document.getElementById(name);
+          field.value = localStorage[name] || '';
+        }
         restore_boolean("case_sensitive");
         restore_boolean("main_search_links");
         restore_boolean("search_in_selects");
         restore_boolean("starts_link_only");
+        restore_string("sites_blacklist");
       }      
     </script>
   </head>
@@ -54,10 +64,16 @@
         Search text in select options
       </label>
       <br />
-       <label for="starts_link_only"> 
+      <label for="starts_link_only"> 
         <input id="starts_link_only" type="checkbox" value="1" />
         Search only start of text when searching links
       </label>
+      <br /><br />
+      <label for="sites_blacklist"> 
+        Add sites you want to disable. i.e. http://mail.google.com/*
+      </label>
+      <br />
+      <textarea id="sites_blacklist" cols="60" rows="10"></textarea>
       <br />
       <br />
       <button onclick="save_options()">Save</button>

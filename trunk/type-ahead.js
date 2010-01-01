@@ -408,6 +408,16 @@ function init(options) {
     document.activeElement = null;
   }
 
+  if (options.sites_blacklist) {
+    var url = window.location.href;
+    var urls = options.sites_blacklist.split('\n');
+    for (var i=0; i < urls.length; i++) {
+      var regexp = new RegExp('^' + urls[i].replace('*', '.*') + '$');
+      if (url.match(regexp))
+        return false;
+    }
+  }
+
   if (!document.activeElement) {
     document.addEventListener("focus", dom_trackActiveElement, true);
     document.addEventListener("blur", dom_trackActiveElementLost, true);
@@ -433,6 +443,7 @@ var options = {
   main_search_links: false,
   search_in_selects: false,
   starts_link_only: false,
+  sites_blacklist: '',
 };
 
 
@@ -443,6 +454,7 @@ if (chrome.extension) {
       main_search_links: (response.main_search_links == '1'),
       search_in_selects: (response.search_in_selects == '1'),
       starts_link_only: (response.starts_link_only == '1'),
+      sites_blacklist: response.sites_blacklist,
     };
     init(options);
   });
