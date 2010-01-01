@@ -1,7 +1,9 @@
-chrome-type-ahead (0.1.2) unstable; urgency=low
+chrome-type-ahead (0.2) unstable; urgency=low
 
   * Add option: starts_only_links
   * Consider also 'visibility: hidden' CSS as non-matchable elements 
+  * Do not start search on element with 'contenteditable' attribute enabled
+  * Add sites blacklist
 
  --  <tokland@gmail.com>  Thu, 31 Dec 2009 20:26:52 +0100
 
