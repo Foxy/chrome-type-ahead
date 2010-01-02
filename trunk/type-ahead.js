@@ -171,7 +171,7 @@ function clearSearchBox() {
 
 function showSearchBox(search) {
   var colors = {
-    text: {ok: '#FFD', ko: '#FDD'},
+    text: {ok: '#FF5', ko: '#F55'},
     links: {ok: '#DDF', ko: '#FDF'},
   }
   var box = document.getElementById('type-ahead-box');
