@@ -51,26 +51,27 @@
     <div id="options">
       <label for="case_sensitive"> 
         <input id="case_sensitive" type="checkbox" value="1" />
-        Search case-sensitive
+        Search case-sensitive strings
       </label>
       <br />
       <label for="main_search_links">
         <input id="main_search_links" type="checkbox" value="1" />
-        Invert modes (primary mode searches only links)
+        Invert modes (primary mode matches links)
       </label>
       <br />
       <label for="search_in_selects"> 
         <input id="search_in_selects" type="checkbox" value="1" />
-        Search text in select options
+        Search text inside select options
       </label>
       <br />
       <label for="starts_link_only"> 
         <input id="starts_link_only" type="checkbox" value="1" />
         Search only start of text when searching links
       </label>
-      <br /><br />
+      <h3>Blacklisted sites</h3>
       <label for="sites_blacklist"> 
-        Add sites you want to disable. i.e. http://mail.google.com/*
+        Add URLs for sites for which direct access to primary mode will be disabled (you'll need to use the <strong>/</strong> instead).
+        <br />Example: <i>http://mail.google.com/*</i>
       </label>
       <br />
       <textarea id="sites_blacklist" cols="60" rows="10"></textarea>
@@ -79,13 +80,12 @@
       <button onclick="save_options()">Save</button>
       &nbsp;<span id="status"></span>
     </div>
-
-    <hr />    
+   
     <h2>How to use this extension</h2>
     <div id="info">
       <ul>
-        <li>Write directly the text you want to search (this is the primary search).</li>
-        <li>Press <strong>'</strong> to start the secondary search (by default, this mode matches only links).</li>
+        <li>Write directly or press <strong>/</strong> to start the primary search (by default, this mode matches all texts).</li>
+        <li>Press <strong>'</strong> to start the secondary search (by default, this mode matches only text links).</li>
         <li>Use <i>F3</i> or <i>Control+G</i> or <i>Alt+N/P</i> to switch between matches.</li>        
         <li>Use <i>F4</i> to toggle matching mode (text/links) once the search has started.</li>
       </ul>               
