@@ -1,3 +1,10 @@
+chrome-type-ahead (0.2) unstable; urgency=low
+
+  * Fix propagation in blacklisted sites 
+  * Fix search mode selection
+
+ --  <tokland@gmail.com>  Sat, 02 Jan 2010 20:17:54 +0100
+
 chrome-type-ahead (0.1.2) unstable; urgency=low
 
   * Add option: starts_only_links
