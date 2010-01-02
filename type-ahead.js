@@ -182,8 +182,10 @@ function showSearchBox(search) {
     addStyle(styles);
   }
   box.style.display = 'block';
-  var color = colors[search.mode][(search.total < 1 && search.text) ? 'ko' : 'ok'] 
-  box.style['background-color'] = color;
+  if (search.mode) {
+    var color = colors[search.mode][(search.total < 1 && search.text) ? 'ko' : 'ok'] 
+    box.style['background-color'] = color;
+  }
   box.innerHTML = search.text ? 
     (search.text + ' <small>(' + search.nmatch + ' of ' + search.total + ')</small>') : '&nbsp;';
   box.style['top'] = ''
@@ -291,6 +293,19 @@ function processSearch(search, options) {
   return(selected);
 }
 
+function check_blacklist(sites_blacklist) {
+  if (sites_blacklist) {
+    var url = window.location.href;
+    var urls = options.sites_blacklist.split('\n');
+    for (var i=0; i < urls.length; i++) {
+      var regexp = new RegExp('^' + urls[i].replace('*', '.*') + '$');
+      if (url.match(regexp))
+        return true;
+    }
+  }
+  return false;
+}
+
 function init(options) {
   var keycodes = {
     "backspace": 8,
@@ -331,7 +346,11 @@ function init(options) {
         
       var code = ev.keyCode;
       var selectedAnchor = getSelectedAnchor();
-          
+      var blacklisted = check_blacklist(options.sites_blacklist);
+      
+      if (blacklisted && !search.mode)
+        return;      
+        
       if (code == keycodes.backspace && search.mode) {
         if (search.text) {
           search.text = search.text.substr(0, search.text.length-1);
@@ -368,31 +387,35 @@ function init(options) {
     rootNode.addEventListener('keypress', function(ev) {
       if (isInputElementActive())
         return;
+      var blacklisted = check_blacklist(options.sites_blacklist);
       var code = ev.keyCode;
       var ascii = String.fromCharCode(code);
       
       if (!ev.altKey && !ev.metaKey && !ev.ctrlKey && 
           ascii && code != keycodes.enter &&
           (code != keycodes.spacebar || search.mode)) {
-        var add = true; 
-        if (!search.mode) {
-          search.mode = ((ascii == "'") ^ options.main_search_links) ? 'links' : 'text';
-          if (ascii == "'")
-            add = false;
-        }
-        if (add) 
+        if (!search.mode && (ascii == "'" || ascii == "/")) {
+          search.mode = (ascii == "/" ^ options.main_search_links) ? 
+            'links' : 'text';
+        } else if (!search.mode && blacklisted) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          return;
+        } else {
+          if (!search.mode) 
+            search.mode = options.main_search_links ? 'links' : 'text';
           search.text += ascii;
+        }
         processSearchWithOptions(true)
         showSearchBox(search);
-        if (code == keycodes.spacebar) {
+        if (blacklisted || code == keycodes.spacebar) {
           ev.preventDefault();
           ev.stopPropagation();
         }
-      }        
+      }
     }, false);
  
-    var mouseNode = (rootNode != window) ? rootNode : document.body
-    mouseNode.addEventListener('mousedown', function(ev) {
+    rootNode.addEventListener('mousedown', function(ev) {
       if (search.mode)
         clearSearch(false);      
     }, false);
@@ -408,23 +431,13 @@ function init(options) {
     document.activeElement = null;
   }
 
-  if (options.sites_blacklist) {
-    var url = window.location.href;
-    var urls = options.sites_blacklist.split('\n');
-    for (var i=0; i < urls.length; i++) {
-      var regexp = new RegExp('^' + urls[i].replace('*', '.*') + '$');
-      if (url.match(regexp))
-        return false;
-    }
-  }
-
   if (!document.activeElement) {
     document.addEventListener("focus", dom_trackActiveElement, true);
     document.addEventListener("blur", dom_trackActiveElementLost, true);
   }
 
   clearSearch(false);
-  var rootNodes = [window].concat(getRootNodes());
+  var rootNodes = [document.body].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {
     var rootNode = rootNodes[i];
     if (rootNode.contentDocument) { 
