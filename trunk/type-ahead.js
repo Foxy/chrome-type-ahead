@@ -192,7 +192,8 @@ function showSearchBox(search) {
   if (search.nmatch >= 1 && search.element) {
     var dim1 = getElementPosition(search.element);
     var dim2 = getElementPosition(box);
-    if (dim1.x + dim1.width >= dim2.x && dim1.y <= dim2.y + window.pageYOffset + dim2.height) 
+    if (dim1.x + dim1.width >= dim2.x + window.pageXOffset && 
+        dim1.y <= dim2.y + window.pageYOffset + dim2.height) 
       box.style['top'] = (dim1.y - window.pageYOffset + dim1.height + 10) + 'px';
   }
 }
