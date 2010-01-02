@@ -399,8 +399,6 @@ function init(options) {
         } else if (!search.mode && ascii == "'") {
           search.mode = options.main_search_links ? 'text' : 'links';
         } else if (!search.mode && blacklisted) {
-          ev.preventDefault();
-          ev.stopPropagation();
           return;
         } else {
           if (!search.mode) 
