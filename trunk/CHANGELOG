@@ -1,4 +1,4 @@
-chrome-type-ahead (0.2) unstable; urgency=low
+chrome-type-ahead (0.1.2) unstable; urgency=low
 
   * Add option: starts_only_links
   * Consider also 'visibility: hidden' CSS as non-matchable elements 
