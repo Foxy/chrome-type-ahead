@@ -394,9 +394,10 @@ function init(options) {
       if (!ev.altKey && !ev.metaKey && !ev.ctrlKey && 
           ascii && code != keycodes.enter &&
           (code != keycodes.spacebar || search.mode)) {
-        if (!search.mode && (ascii == "'" || ascii == "/")) {
-          search.mode = (ascii == "/" ^ options.main_search_links) ? 
-            'links' : 'text';
+        if (!search.mode && ascii == "/") {
+          search.mode = options.main_search_links ? 'links' : 'text';
+        } else if (!search.mode && ascii == "'") {
+          search.mode = options.main_search_links ? 'text' : 'links';
         } else if (!search.mode && blacklisted) {
           ev.preventDefault();
           ev.stopPropagation();
