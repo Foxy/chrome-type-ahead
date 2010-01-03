@@ -457,7 +457,6 @@ function init(options) {
 var options = {
   direct_search_mode: 'text',
   case_sensitive: false,
-  main_search_links: false,
   search_in_selects: false,
   starts_link_only: false,
   sites_blacklist: '',
@@ -469,7 +468,6 @@ if (chrome.extension) {
     options = {
       direct_search_mode: response.direct_search_mode,
       case_sensitive: (response.case_sensitive == '1'),
-      main_search_links: (response.main_search_links == '1'),
       search_in_selects: (response.search_in_selects == '1'),
       starts_link_only: (response.starts_link_only == '1'),
       sites_blacklist: response.sites_blacklist,
