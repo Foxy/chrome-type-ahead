@@ -9,7 +9,15 @@
           status.innerHTML = "";
         }, 750);
       }
-
+      
+      function set_blacklist_state() {
+        var blacklist = document.getElementById('sites_blacklist')
+        if (document.getElementById("direct_search_mode").value != 'disabled')
+          blacklist.removeAttribute('disabled');
+        else
+          blacklist.setAttribute('disabled', 'disabled');
+      }
+      
       function save_options() {
         function save_boolean(name) {
           var checkbox = document.getElementById(name);
@@ -19,11 +27,11 @@
           var field = document.getElementById(name);
           localStorage[name] = field.value || '';
         }
+        save_string("direct_search_mode");
         save_boolean("case_sensitive");
-        save_boolean("main_search_links");
         save_boolean("search_in_selects");
         save_boolean("starts_link_only");
-        save_string("sites_blacklist");
+        save_string("sites_blacklist");                 
         feedback();
       }
 
@@ -36,12 +44,13 @@
           var field = document.getElementById(name);
           field.value = localStorage[name] || '';
         }
+        restore_string("direct_search_mode");
         restore_boolean("case_sensitive");
-        restore_boolean("main_search_links");
         restore_boolean("search_in_selects");
         restore_boolean("starts_link_only");
         restore_string("sites_blacklist");
-      }      
+        set_blacklist_state();
+      }
     </script>
   </head>
     
@@ -49,14 +58,18 @@
     <h2>Options</h2>
         
     <div id="options">
+      <label for="direct_search_mode">
+        <select id="direct_search_mode" onchange="set_blacklist_state()">
+          <option value="text">Text</option>
+          <option value="links">Links</option>
+          <option value="disabled">Disabled</option>
+        </select>
+        Direct search state
+      </label>
+      <br />
       <label for="case_sensitive"> 
         <input id="case_sensitive" type="checkbox" value="1" />
         Search case-sensitive strings
-      </label>
-      <br />
-      <label for="main_search_links">
-        <input id="main_search_links" type="checkbox" value="1" />
-        Invert modes (primary mode matches links)
       </label>
       <br />
       <label for="search_in_selects"> 
@@ -70,7 +83,7 @@
       </label>
       <h3>Blacklisted sites</h3>
       <label for="sites_blacklist"> 
-        Add URLs for sites for which direct access to primary mode will be disabled (you'll need to use the <strong>/</strong> instead).
+        Add URLs for sites for which direct search will be disabled (you'll need to use either <strong>/</strong> or <strong>'</strong> instead).
         <br />Example: <i>http://mail.google.com/*</i>
       </label>
       <br />

@@ -1,6 +1,7 @@
 chrome-type-ahead (0.2.1) unstable; urgency=low
 
   * Fix box position (consider window's offset)
+  * Direct search configurable
 
  --  <tokland@gmail.com>  Sat, 02 Jan 2010 23:03:11 +0100
 
