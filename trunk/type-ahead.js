@@ -396,9 +396,9 @@ function init(options) {
           ascii && code != keycodes.enter &&
           (code != keycodes.spacebar || search.mode)) {
         if (!search.mode && ascii == "/") {
-          search.mode = options.main_search_links ? 'links' : 'text';
+          search.mode = 'text';
         } else if (!search.mode && ascii == "'") {
-          search.mode = options.main_search_links ? 'text' : 'links';
+          search.mode = 'links';
         } else if (!search.mode && blacklisted) {
           return;
         } else {
