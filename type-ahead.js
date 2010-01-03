@@ -60,6 +60,11 @@ function addStyle(css) {
     head.appendChild(style);
   }
 }
+
+function stopEvent(ev) {
+  ev.preventDefault();
+  ev.stopPropagation();
+}
     
 function up(element, tagName) {
   var upTagName = tagName.toUpperCase();
@@ -381,8 +386,7 @@ function init(options) {
         return;
       }
       
-      ev.preventDefault();
-      ev.stopPropagation();
+      stopEvent(ev);
     }, false);
     
     rootNode.addEventListener('keypress', function(ev) {
@@ -411,10 +415,8 @@ function init(options) {
         }
         processSearchWithOptions(true)
         showSearchBox(search);
-        if (blacklisted || code == keycodes.spacebar) {
-          ev.preventDefault();
-          ev.stopPropagation();
-        }
+        if (blacklisted || code == keycodes.spacebar)
+          stopEvent(ev)
       }
     }, false);
  
