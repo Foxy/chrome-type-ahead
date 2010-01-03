@@ -116,8 +116,8 @@ function getSelectedAnchor() {
   var rootNodes = [document].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {
     var doc = rootNodes[i].contentDocument || rootNodes[i];  
-    if (doc.activeElement && doc.activeElement.tagName == "A")
-      return(doc.activeElement);
+    if (doc._tafActiveElement && doc._tafActiveElement.tagName == "A")
+      return(doc._tafActiveElement);
   }
 }
 
@@ -140,7 +140,7 @@ function scrollToElement(element) {
 }
 
 function isInputElementActive(doc) {
-  var element = document.activeElement;
+  var element = document._tafActiveElement;
   if (!element)
     return;
   var name = element.tagName.toUpperCase();
@@ -172,7 +172,7 @@ function clearSearchBox() {
 function showSearchBox(search) {
   var colors = {
     text: {ok: '#FF5', ko: '#F55'},
-    links: {ok: '#DDF', ko: '#FDF'},
+    links: {ok: '#DDF', ko: '#F55'},
   }
   var box = document.getElementById('type-ahead-box');
   if (!box) { 
@@ -426,15 +426,15 @@ function init(options) {
 
   function dom_trackActiveElement(evt) {
     if (evt && evt.target) { 
-      document.activeElement = evt.target == document ? null : evt.target;
+      document._tafActiveElement = (evt.target == document) ? null : evt.target;
     }
   }
 
   function dom_trackActiveElementLost(evt) { 
-    document.activeElement = null;
+    document._tafActiveElement = null;
   }
 
-  if (!document.activeElement) {
+  if (!document._tafActiveElement) {
     document.addEventListener("focus", dom_trackActiveElement, true);
     document.addEventListener("blur", dom_trackActiveElementLost, true);
   }
