@@ -401,9 +401,12 @@ function init(options) {
           search.mode = 'links';
         } else if (!search.mode && blacklisted) {
           return;
-        } else {
-          if (!search.mode) 
-            search.mode = options.main_search_links ? 'links' : 'text';
+        } else if (!search.mode && options.direct_search_mode == 'disabled') {
+          return;
+        } else if (!search.mode) {
+          search.mode = options.direct_search_mode == 'links' ? 'links' : 'text';
+          search.text += ascii;
+        } else if (search.mode) {
           search.text += ascii;
         }
         processSearchWithOptions(true)
@@ -452,6 +455,7 @@ function init(options) {
 
 /* Default options */
 var options = {
+  direct_search_mode: 'text',
   case_sensitive: false,
   main_search_links: false,
   search_in_selects: false,
@@ -463,6 +467,7 @@ var options = {
 if (chrome.extension) {
   chrome.extension.sendRequest({'get_options': true}, function(response) {
     options = {
+      direct_search_mode: response.direct_search_mode,
       case_sensitive: (response.case_sensitive == '1'),
       main_search_links: (response.main_search_links == '1'),
       search_in_selects: (response.search_in_selects == '1'),
