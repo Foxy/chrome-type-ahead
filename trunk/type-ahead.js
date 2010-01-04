@@ -118,11 +118,12 @@ function clearRanges() {
 }
 
 function getSelectedAnchor() {
+  var element = document.activeElement || document._tafActiveElement;
   var rootNodes = [document].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {
     var doc = rootNodes[i].contentDocument || rootNodes[i];  
-    if (doc._tafActiveElement && doc._tafActiveElement.tagName == "A")
-      return(doc._tafActiveElement);
+    if (element && element.tagName == "A")
+      return(element);
   }
 }
 
@@ -149,7 +150,7 @@ function scrollToElement(element) {
 }
 
 function isInputElementActive(doc) {
-  var element = document._tafActiveElement;
+  var element = document.activeElement || document._tafActiveElement;
   if (!element)
     return;
   var name = element.tagName.toUpperCase();

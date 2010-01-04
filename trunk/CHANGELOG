@@ -1,3 +1,10 @@
+chrome-type-ahead (0.2.2) unstable; urgency=low
+
+  * Fix event propagation on sites with shortcuts
+  * Support for real regexps in sites blacklist (start line with |) 
+
+ --  <tokland@gmail.com>  Mon, 04 Jan 2010 12:09:39 +0100
+
 chrome-type-ahead (0.2.1) unstable; urgency=low
 
   * Fix box position (consider window's offset)
