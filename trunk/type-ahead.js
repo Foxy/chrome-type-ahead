@@ -132,11 +132,15 @@ function getElementPosition(element) {
   var selectedPosX = 0;
   var selectedPosY = 0;
   while(element) {
-    selectedPosX += element.offsetLeft;
-    selectedPosY += element.offsetTop;
+    selectedPosX += element.offsetLeft || 0;
+    selectedPosY += element.offsetTop || 0;
     element = element.offsetParent;
   }
-  return {x: selectedPosX, y: selectedPosY, width: width, height: height};
+  var s = document.body.style.zoom; 
+  var zoom = s.match('%$') ? parseFloat(s.slice(0, s.length - 1)) / 100 : 
+    parseFloat(s.replace(',', '.'));
+  return {x: selectedPosX*zoom, y: selectedPosY*zoom, 
+          width: width*zoom, height: height*zoom};
 }
 
 function scrollToElement(element) {
