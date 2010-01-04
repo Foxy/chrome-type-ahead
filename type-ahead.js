@@ -302,9 +302,17 @@ function processSearch(search, options) {
 function check_blacklist(sites_blacklist) {
   if (sites_blacklist) {
     var url = window.location.href;
-    var urls = options.sites_blacklist.split('\n');
+    var urls = options.sites_blacklist.split('\n');    
     for (var i=0; i < urls.length; i++) {
-      var regexp = new RegExp('^' + urls[i].replace('*', '.*') + '$');
+      var s = urls[i].replace(/^\s+|\s+$/g, '');
+      // If URL starts with #, ignore it       
+      // If URL starts with | assume it is a real regexp.
+      // Otherwise convert * (more user-friendly) to .* and adjust string
+      if (s[0] == '#')
+        continue;
+      var s2 = (s[0] == '|') ? s.slice(1) : 
+        s.replace('.', '\\.').replace('+', '\\+').replace('*', '.*'); 
+      var regexp = new RegExp('^' + s2 + '$');
       if (url.match(regexp))
         return true;
     }
