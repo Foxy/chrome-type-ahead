@@ -415,8 +415,7 @@ function init(options) {
         }
         processSearchWithOptions(true)
         showSearchBox(search);
-        if (blacklisted || code == keycodes.spacebar)
-          stopEvent(ev)
+        stopEvent(ev)
       }
     }, false);
  
