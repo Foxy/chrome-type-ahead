@@ -1,7 +1,8 @@
 chrome-type-ahead (0.2.2) unstable; urgency=low
 
-  * Fix event propagation on sites with shortcuts
-  * Support for real regexps in sites blacklist (start line with |) 
+  * Fix event propagation on sites with shortcuts.
+  * Support for comments and real regexps in blacklist (start line with |).
+  * Add (a hopefully temporal) hack to coexist with Autozoom extension. 
 
  --  <tokland@gmail.com>  Mon, 04 Jan 2010 12:09:39 +0100
 
