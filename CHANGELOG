@@ -1,3 +1,9 @@
+chrome-type-ahead (0.2.3) unstable; urgency=low
+
+  * Fix isActiveInput in framed pages (issue39). 
+
+ --  <tokland@gmail.com>  Thu, 07 Jan 2010 12:13:00 +0100
+
 chrome-type-ahead (0.2.2) unstable; urgency=low
 
   * Fix event propagation on sites with shortcuts.
