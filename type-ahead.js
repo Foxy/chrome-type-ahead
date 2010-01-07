@@ -117,11 +117,15 @@ function clearRanges() {
   }
 }
 
-function getSelectedAnchor() {
-  var element = document.activeElement || document._tafActiveElement;
+function getActiveElement(doc) {
+	  return doc.activeElement || doc._tafActiveElement;
+}
+
+function getSelectedAnchor(doc) {
   var rootNodes = [document].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {
-    var doc = rootNodes[i].contentDocument || rootNodes[i];  
+    var doc = rootNodes[i].contentDocument || rootNodes[i];
+    var element = getActiveElement(doc);  
     if (element && element.tagName == "A")
       return(element);
   }
@@ -150,7 +154,7 @@ function scrollToElement(element) {
 }
 
 function isInputElementActive(doc) {
-  var element = document.activeElement || document._tafActiveElement;
+  var element = getActiveElement(doc);
   if (!element)
     return;
   var name = element.tagName.toUpperCase();
@@ -325,6 +329,23 @@ function check_blacklist(sites_blacklist) {
   return false;
 }
 
+function setAlternativeActiveDocument(doc) { 
+  function dom_trackActiveElement(evt) {
+    if (evt && evt.target) { 
+      doc._tafActiveElement = (evt.target == doc) ? null : evt.target;
+    }
+  }
+
+  function dom_trackActiveElementLost(evt) { 
+    doc._tafActiveElement = null;
+  }
+
+  if (!doc.activeElement) {
+    doc.addEventListener("focus", dom_trackActiveElement, true);
+    doc.addEventListener("blur", dom_trackActiveElementLost, true);
+  }
+}
+
 function init(options) {
   var keycodes = {
     "backspace": 8,
@@ -359,12 +380,14 @@ function init(options) {
   }
 
   function setEvents(rootNode) {
+    var doc = rootNode.contentDocument || rootNode;
+
     rootNode.addEventListener('keydown', function(ev) {
-      if (isInputElementActive())
+      if (isInputElementActive(doc))
         return;      
         
       var code = ev.keyCode;
-      var selectedAnchor = getSelectedAnchor();
+      var selectedAnchor = getSelectedAnchor(doc);
       var blacklisted = check_blacklist(options.sites_blacklist);
       
       if (blacklisted && !search.mode)
@@ -403,7 +426,7 @@ function init(options) {
     }, false);
     
     rootNode.addEventListener('keypress', function(ev) {
-      if (isInputElementActive())
+      if (isInputElementActive(doc))
         return;
       var blacklisted = check_blacklist(options.sites_blacklist);
       var code = ev.keyCode;
@@ -436,21 +459,8 @@ function init(options) {
       if (search.mode)
         clearSearch(false);      
     }, false);
-  }
-
-  function dom_trackActiveElement(evt) {
-    if (evt && evt.target) { 
-      document._tafActiveElement = (evt.target == document) ? null : evt.target;
-    }
-  }
-
-  function dom_trackActiveElementLost(evt) { 
-    document._tafActiveElement = null;
-  }
-
-  if (!document._tafActiveElement) {
-    document.addEventListener("focus", dom_trackActiveElement, true);
-    document.addEventListener("blur", dom_trackActiveElementLost, true);
+    
+    setAlternativeActiveDocument(doc);
   }
 
   clearSearch(false);
