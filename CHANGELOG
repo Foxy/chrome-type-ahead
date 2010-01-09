@@ -1,3 +1,9 @@
+chrome-type-ahead (0.2.4) unstable; urgency=low
+
+  * Fix input detection. 
+
+ --  <tokland@gmail.com>  Sat, 09 Jan 2010 09:41:03 +0100
+
 chrome-type-ahead (0.2.3) unstable; urgency=low
 
   * Fix isActiveInput in framed pages (issue39). 

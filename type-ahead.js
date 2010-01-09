@@ -381,8 +381,9 @@ function init(options) {
 
   function setEvents(rootNode) {
     var doc = rootNode.contentDocument || rootNode;
+    var body = rootNode.body;
 
-    rootNode.addEventListener('keydown', function(ev) {
+    body.addEventListener('keydown', function(ev) {
       if (isInputElementActive(doc))
         return;      
         
@@ -425,7 +426,7 @@ function init(options) {
       stopEvent(ev);
     }, false);
     
-    rootNode.addEventListener('keypress', function(ev) {
+    body.addEventListener('keypress', function(ev) {
       if (isInputElementActive(doc))
         return;
       var blacklisted = check_blacklist(options.sites_blacklist);
@@ -455,7 +456,7 @@ function init(options) {
       }
     }, false);
  
-    rootNode.addEventListener('mousedown', function(ev) {
+    body.addEventListener('mousedown', function(ev) {
       if (search.mode)
         clearSearch(false);      
     }, false);
@@ -464,16 +465,16 @@ function init(options) {
   }
 
   clearSearch(false);
-  var rootNodes = [document.body].concat(getRootNodes());
+  var rootNodes = [document].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {
     var rootNode = rootNodes[i];
     if (rootNode.contentDocument) { 
       rootNode.addEventListener('load', function(ev) {
-        setEvents(ev.target.contentDocument.body);
+        setEvents(ev.target.contentDocument);
       });
     }
     if (!rootNode.contentDocument || rootNode.contentDocument.readyState == 'complete')
-      setEvents(rootNode.contentDocument ? rootNode.contentDocument.body : rootNode);
+      setEvents(rootNode.contentDocument ? rootNode.contentDocument : rootNode);
   } 
 }
 
