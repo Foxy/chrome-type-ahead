@@ -141,9 +141,14 @@ function getElementPosition(element) {
     selectedPosY += element.offsetTop || 0;
     element = element.offsetParent;
   }
-  var s = document.body.style.zoom; 
-  var zoom = s.match('%$') ? parseFloat(s.slice(0, s.length - 1)) / 100 : 
-    parseFloat(s.replace(',', '.'));
+  var s = document.body.style.zoom;
+  var zoom;
+  if (s.match('%$')) 
+    zoom = parseFloat(s.slice(0, s.length - 1)) / 100;
+  else if (s) 
+    zoom = parseFloat(s.replace(',', '.'));
+  else
+    zoom = 1;
   return {x: selectedPosX*zoom, y: selectedPosY*zoom, 
           width: width*zoom, height: height*zoom};
 }
