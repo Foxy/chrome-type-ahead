@@ -141,7 +141,7 @@ function getElementPosition(element) {
     selectedPosY += element.offsetTop || 0;
     element = element.offsetParent;
   }
-  var s = document.body.style.zoom;
+  var s = document.body.parentElement.style.zoom;
   var zoom;
   if (s.match('%$')) 
     zoom = parseFloat(s.slice(0, s.length - 1)) / 100;
