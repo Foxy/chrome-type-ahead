@@ -418,7 +418,7 @@ function init(options) {
         processSearchWithOptions(true);
         showSearchBox(search);
       } else if (search.text && (code == keycodes.f3 ||
-                                 (code == keycodes.g && ev.ctrlKey) ||
+                                 (code == keycodes.g && (ev.ctrlKey || ev.metaKey)) ||
                                  (code == keycodes.n && ev.altKey) ||
                                  (code == keycodes.p && ev.altKey))) { 
         search.index += (ev.shiftKey || code == keycodes.p) ? -1 : +1;
