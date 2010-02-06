@@ -254,7 +254,7 @@ function processSearch(search, options) {
       var option = up(textNode.parentNode, 'option');
       if (option && !options.search_in_selects)
         return NodeFilter.FILTER_REJECT;
-      return NodeFilter.FILTER_ACCEPT
+      return NodeFilter.FILTER_ACCEPT;
     }
   
     var nodeIterator = doc.createNodeIterator(
@@ -267,9 +267,14 @@ function processSearch(search, options) {
     while ((textNode = nodeIterator.nextNode()) != null) {
       var anchor = up(textNode, 'a');
       var option = up(textNode.parentNode, 'option');
-      var result = {doc: doc, frame: frame, node: textNode, 
-                    anchor: anchor, option: option};
-      matchedElements.push(result);
+      var regexp2 = new RegExp(regexp);
+      var result;
+      while (match = regexp2.exec(textNode.data)) {
+        result = {doc: doc, frame: frame, node: textNode, 
+                      anchor: anchor, option: option, 
+                      start: match.index, end: regexp2.lastIndex};
+        matchedElements.push(result);
+      }          
     }
   }
   
@@ -293,18 +298,13 @@ function processSearch(search, options) {
       search.select = null;
     }
     clearRanges();
-    var range = result.doc.createRange();
-    var regexp2 = new RegExp(regexp);
-    var start = result.node.data.search(regexp2);
-    if (start >= 0) {
-      regexp2.exec(result.node.data);
-      var end = regexp2.lastIndex;
-      range.setStart(result.node, start);
-      range.setEnd(result.node, end);
-      var selection = window.getSelection();
-      selection.addRange(range);
-      selected = true;
-    }    
+    
+    var range = result.doc.createRange();    
+    range.setStart(result.node, result.start);
+    range.setEnd(result.node, result.end);
+    var selection = window.getSelection();
+    selection.addRange(range);
+    selected = true;
   } else {
     search.nmatch = 0;
     clearRanges();
