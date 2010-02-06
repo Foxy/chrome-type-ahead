@@ -1,3 +1,10 @@
+chrome-type-ahead (0.2.6) unstable; urgency=low
+
+  * issue48: CMD-G goes to next 'hit' as well
+  * issue57: Extension finds all matches in the same block of text 
+
+ --  <tokland@gmail.com>  Sat, 06 Feb 2010 23:24:16 +0100
+
 chrome-type-ahead (0.2.5) unstable; urgency=low
 
   * Fix move to text node 
