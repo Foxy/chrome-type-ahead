@@ -409,7 +409,7 @@ function init(options) {
           processSearchWithOptions(true);
           showSearchBox(search);
         }
-      } else if (code == keycodes.escape) {
+      } else if (code == keycodes.escape && search.mode) {
         clearSearch(true);
         processSearchWithOptions(true);
       } else if (code == keycodes.enter && 
