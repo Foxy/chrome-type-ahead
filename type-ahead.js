@@ -51,6 +51,8 @@ var styles = '\
     color: #444;\
   }'
 
+/* Generic functions */
+
 function addStyle(css) {
   var head = document.getElementsByTagName('head')[0];
   if (head) {
@@ -181,6 +183,25 @@ function selectOnchange(select) {
   }
 }
 
+function setAlternativeActiveDocument(doc) { 
+  function dom_trackActiveElement(evt) {
+    if (evt && evt.target) { 
+      doc._tafActiveElement = (evt.target == doc) ? null : evt.target;
+    }
+  }
+
+  function dom_trackActiveElementLost(evt) { 
+    doc._tafActiveElement = null;
+  }
+
+  if (!doc.activeElement) {
+    doc.addEventListener("focus", dom_trackActiveElement, true);
+    doc.addEventListener("blur", dom_trackActiveElementLost, true);
+  }
+}
+
+/* Type-ahead specific functions */
+
 function clearSearchBox() {
   var box = document.getElementById('type-ahead-box');
   if (box) {
@@ -234,7 +255,7 @@ function processSearch(search, options) {
   if (options.starts_link_only)
     string = '^' + string;
   var regexp =  new RegExp(string, options.case_sensitive ? 'g' : 'ig')
-  // currently Xpath does not support regexp matches :-(
+  // currently Xpath does not support regexp matches. That would be great:
   // document.evaluate('//a//*[matches(text(), "regexp")]', document.body, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(N);
   var rootNodes = [window].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {    
@@ -321,7 +342,7 @@ function check_blacklist(sites_blacklist) {
       var s = urls[i].replace(/^\s+|\s+$/g, '');
       // If URL starts with #, ignore it       
       // If URL starts with | assume it is a real regexp.
-      // Otherwise convert * (more user-friendly) to .* and adjust string
+      // Otherwise escape regexp chars to normal string (and * to .*)
       if (s[0] == '#')
         continue;
       var s2 = (s[0] == '|') ? s.slice(1) : 
@@ -332,23 +353,6 @@ function check_blacklist(sites_blacklist) {
     }
   }
   return false;
-}
-
-function setAlternativeActiveDocument(doc) { 
-  function dom_trackActiveElement(evt) {
-    if (evt && evt.target) { 
-      doc._tafActiveElement = (evt.target == doc) ? null : evt.target;
-    }
-  }
-
-  function dom_trackActiveElementLost(evt) { 
-    doc._tafActiveElement = null;
-  }
-
-  if (!doc.activeElement) {
-    doc.addEventListener("focus", dom_trackActiveElement, true);
-    doc.addEventListener("blur", dom_trackActiveElementLost, true);
-  }
 }
 
 function init(options) {
@@ -493,19 +497,21 @@ var options = {
 };
 
 
+/* Main */
+
 if (chrome.extension) {
   chrome.extension.sendRequest({'get_options': true}, function(response) {
     options = {
       direct_search_mode: response.direct_search_mode,
+      sites_blacklist: response.sites_blacklist,
       case_sensitive: (response.case_sensitive == '1'),
       search_in_selects: (response.search_in_selects == '1'),
       starts_link_only: (response.starts_link_only == '1'),
-      sites_blacklist: response.sites_blacklist,
     };
     init(options);
   });
 } else {
-  // So as to this code works also as stand-alone script
+  // So this code can be used as stand-alone script (using default options)
   window.addEventListener('load', function(ev) {
     init(options);
   });
