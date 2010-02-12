@@ -1,5 +1,5 @@
 /*
- Find text or links as you write. 
+ type-ahead-find: find text or links as you write. 
  
  This script is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -260,7 +260,7 @@ function processSearch(search, options) {
   var rootNodes = [window].concat(getRootNodes());
   for (var i = 0; i < rootNodes.length; i++) {    
     var doc = rootNodes[i].document || rootNodes[i].contentDocument;
-    if (!doc)
+    if (!doc || !doc.body)
       continue;
     var frame = rootNodes[i].contentWindow || rootNodes[i];
 
