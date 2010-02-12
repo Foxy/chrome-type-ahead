@@ -57,6 +57,18 @@ function max(a, b) {
   return ((a > b) ? a : b); 
 }
 
+function get_current_zoom(doc) {
+  var s = doc.body.parentElement.style.zoom;
+  var zoom;
+  if (s.match('%$'))
+    zoom = parseFloat(s.slice(0, s.length - 1)) / 100;
+  else if (s)
+    zoom = parseFloat(s.replace(',', '.'));
+  else
+    zoom = 1;
+  return (zoom);
+}
+
 function addStyle(css) {
   var head = document.getElementsByTagName('head')[0];
   if (head) {
@@ -304,10 +316,12 @@ function processSearch(search, options) {
       result.anchor.focus();
     } else {
       var rect = range.getBoundingClientRect();
-      var doc_height = doc.documentElement.clientHeight;
-      if (rect.bottom < (doc_height * 1) / 6.0 || rect.top > (doc_height * 5) / 6.0) {  
-        var y = max(0, window.pageYOffset + rect.top - doc.documentElement.clientHeight/3);
-        window.scrollTo(window.pageXOffset + rect.left, y);
+      var doc_height = window.innerHeight;
+      if (rect.top < (doc_height * 1) / 6.0 || rect.bottom > (doc_height * 5) / 6.0) {  
+        var y = max(0, window.pageYOffset + rect.top - doc_height / 3.0);
+        var zoom = get_current_zoom(result.doc);
+        console.log(zoom);
+        window.scrollTo(zoom*(window.pageXOffset + rect.left), zoom*y);
       }
     }
   } else {
