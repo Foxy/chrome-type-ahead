@@ -133,33 +133,6 @@ function getSelectedAnchor(doc) {
   }
 }
 
-function getElementPosition(element) {
-  var width = element.offsetWidth;
-  var height = element.offsetHeight;
-  var selectedPosX = 0;
-  var selectedPosY = 0;
-  while(element) {
-    selectedPosX += element.offsetLeft || 0;
-    selectedPosY += element.offsetTop || 0;
-    element = element.offsetParent;
-  }
-  var s = document.body.parentElement.style.zoom;
-  var zoom;
-  if (s.match('%$')) 
-    zoom = parseFloat(s.slice(0, s.length - 1)) / 100;
-  else if (s) 
-    zoom = parseFloat(s.replace(',', '.'));
-  else
-    zoom = 1;
-  return {x: selectedPosX*zoom, y: selectedPosY*zoom, 
-          width: width*zoom, height: height*zoom};
-}
-
-function scrollToElement(element) {
-  var dim = getElementPosition(element);
-  window.scrollTo(dim.x, dim.y);
-}
-
 function isInputElementActive(doc) {
   var element = getActiveElement(doc);
   if (!element)
@@ -229,13 +202,11 @@ function showSearchBox(search) {
   box.innerHTML = search.text ? 
     (search.text + ' <small>(' + search.nmatch + ' of ' + search.total + ')</small>') : '&nbsp;';
   box.style['top'] = ''
-  if (search.nmatch >= 1 && search.element) {
-    var dim1 = getElementPosition(search.element);
-    var dim2 = getElementPosition(box);
-    if (dim1.x + dim1.width >= dim2.x + window.pageXOffset && 
-        dim1.y <= dim2.y + window.pageYOffset + dim2.height) {
-      topval = (dim1.y - window.pageYOffset + dim1.height + 10);
-      box.style['top'] = ((topval < 50) ? topval : 0)  + 'px';
+  if (search.nmatch >= 1 && search.range) {
+    var sel = search.range.getBoundingClientRect();
+    if (sel.right >= box.offsetLeft && sel.top <= box.offsetTop + box.offsetHeight) {
+      topval = (sel.bottom + 10);
+      box.style['top'] = ((topval < 100) ? topval : 100)  + 'px';
     }
   }
 }
@@ -310,10 +281,6 @@ function processSearch(search, options) {
     search.nmatch = index + 1;      
     var result = matchedElements[index];
     search.element = result.node.parentNode;
-    if (result.anchor)
-      result.anchor.focus();
-    else
-      scrollToElement(result.node.parentNode);
     if (result.option) {
       result.option.selected = 'selected';
       search.select = up(result.option, 'select');
@@ -327,7 +294,15 @@ function processSearch(search, options) {
     range.setEnd(result.node, result.end);
     var selection = window.getSelection();
     selection.addRange(range);
+    search.range = range;
     selected = true;
+    if (result.anchor) {
+      result.anchor.focus();
+    } else {
+      rect = range.getBoundingClientRect();
+      window.scrollTo(window.pageXOffset + rect.left, 
+        window.pageYOffset + rect.top);
+    }
   } else {
     search.nmatch = 0;
     clearRanges();
