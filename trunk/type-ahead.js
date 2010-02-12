@@ -53,6 +53,10 @@ var styles = '\
 
 /* Generic functions */
 
+function max(a, b) {
+  return ((a > b) ? a : b); 
+}
+
 function addStyle(css) {
   var head = document.getElementsByTagName('head')[0];
   if (head) {
@@ -299,9 +303,12 @@ function processSearch(search, options) {
     if (result.anchor) {
       result.anchor.focus();
     } else {
-      rect = range.getBoundingClientRect();
-      window.scrollTo(window.pageXOffset + rect.left, 
-        window.pageYOffset + rect.top);
+      var rect = range.getBoundingClientRect();
+      var doc_height = doc.documentElement.clientHeight;
+      if (rect.bottom < (doc_height * 1) / 6.0 || rect.top > (doc_height * 5) / 6.0) {  
+        var y = max(0, window.pageYOffset + rect.top - doc.documentElement.clientHeight/3);
+        window.scrollTo(window.pageXOffset + rect.left, y);
+      }
     }
   } else {
     search.nmatch = 0;
