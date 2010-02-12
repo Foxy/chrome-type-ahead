@@ -233,8 +233,10 @@ function showSearchBox(search) {
     var dim1 = getElementPosition(search.element);
     var dim2 = getElementPosition(box);
     if (dim1.x + dim1.width >= dim2.x + window.pageXOffset && 
-        dim1.y <= dim2.y + window.pageYOffset + dim2.height) 
-      box.style['top'] = (dim1.y - window.pageYOffset + dim1.height + 10) + 'px';
+        dim1.y <= dim2.y + window.pageYOffset + dim2.height) {
+      topval = (dim1.y - window.pageYOffset + dim1.height + 10);
+      box.style['top'] = ((topval < 50) ? topval : 0)  + 'px';
+    }
   }
 }
 
@@ -284,7 +286,7 @@ function processSearch(search, options) {
       match,
       true
     );    
-
+      
     while ((textNode = nodeIterator.nextNode()) != null) {
       var anchor = up(textNode, 'a');
       var option = up(textNode.parentNode, 'option');
