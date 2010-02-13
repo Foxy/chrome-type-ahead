@@ -317,11 +317,10 @@ function processSearch(search, options) {
     } else {
       var rect = range.getBoundingClientRect();
       var doc_height = window.innerHeight;
-      if (rect.top < (doc_height * 1) / 6.0 || rect.bottom > (doc_height * 5) / 6.0) {  
-        var y = max(0, window.pageYOffset + rect.top - doc_height / 3.0);
-        var zoom = get_current_zoom(result.doc);
-        console.log(zoom);
-        window.scrollTo(zoom*(window.pageXOffset + rect.left), zoom*y);
+      var zoom = get_current_zoom(result.doc);
+      if (zoom*rect.top < (doc_height * 1) / 6.0 || zoom*rect.bottom > (doc_height * 5) / 6.0) {  
+        var y = max(0, window.pageYOffset + zoom*rect.top - doc_height / 3.0);
+        window.scrollTo(window.pageXOffset + zoom*rect.left, y);
       }
     }
   } else {
