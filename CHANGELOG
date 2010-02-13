@@ -1,3 +1,9 @@
+chrome-type-ahead (0.2.7) unstable; urgency=low
+
+  * Improve range selection.
+
+ --  <tokland@gmail.com>  Fri, 12 Feb 2010 22:57:24 +0100
+
 chrome-type-ahead (0.2.6) unstable; urgency=low
 
   * issue48: CMD-G goes to next 'hit' as well
