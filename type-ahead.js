@@ -482,7 +482,7 @@ function init(options) {
         setEvents(ev.target.contentDocument);
       });
     }
-    if (!rootNode.contentDocument || rootNode.contentDocument.readyState == 'complete')
+    else if (!rootNode.contentDocument || rootNode.contentDocument.readyState == 'complete')
       setEvents(rootNode.contentDocument ? rootNode.contentDocument : rootNode);
   } 
 }
