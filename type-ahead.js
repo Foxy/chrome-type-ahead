@@ -416,7 +416,7 @@ function init(options) {
                  (selectedAnchor || selectOnchange(search.select))) {
         clearSearch(true);
         return;
-      } else if (code == keycodes.tab && !selectedAnchor)) {
+      } else if (code == keycodes.tab && !selectedAnchor) {
         var nodeIterator = doc.createNodeIterator(
             doc.body,
             NodeFilter.SHOW_ELEMENT,
