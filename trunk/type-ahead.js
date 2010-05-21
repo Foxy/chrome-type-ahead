@@ -399,8 +399,10 @@ function init(options) {
       var code = ev.keyCode;
       var selectedAnchor = getSelectedAnchor(doc);
       var blacklisted = check_blacklist(options.sites_blacklist);
-      
-      if (blacklisted && !search.mode)
+
+      // Disable blacklisted sites completely
+      //if (blacklisted && !search.mode)
+      if (blacklisted)
         return;      
         
       if (code == keycodes.backspace && search.mode) {
@@ -461,6 +463,8 @@ function init(options) {
       if (isInputElementActive(doc))
         return;
       var blacklisted = check_blacklist(options.sites_blacklist);
+      if (blacklisted)
+        return;
       var code = ev.keyCode;
       var ascii = String.fromCharCode(code);
       
