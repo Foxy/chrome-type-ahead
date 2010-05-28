@@ -347,7 +347,14 @@ function check_blacklist(sites_blacklist) {
         if (url.match(regexp))
           return true;
       } else {
-        if (url.slice(0, s.length) == s)
+        var s2 = s;
+        var special = ["\\", "?", ".", "+", "{", "}", "[", "]", "$", "^"];
+        special.forEach(function(re) { 
+          s2 = s2.replace(new RegExp("\\" + re, "g"), "\\" + re);
+        });
+        s2 = s2.replace(new RegExp("\\*", "g"), ".*");
+        var regexp = new RegExp('^' + s2 + '$');
+        if (url.match(regexp))
           return true;
       }
     }
