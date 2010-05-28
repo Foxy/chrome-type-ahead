@@ -1,3 +1,9 @@
+chrome-type-ahead (0.2.9) unstable; urgency=low
+
+  * Fix issue80: bug with blacklist using '*' wildcards
+
+ --  <tokland@gmail.com>  Fri, 28 May 2010 21:54:50 +0200
+
 chrome-type-ahead (0.2.8) unstable; urgency=low
 
   * Complete disable of blacklisted-sites.
