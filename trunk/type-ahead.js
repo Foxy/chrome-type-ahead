@@ -331,6 +331,13 @@ function processSearch(search, options) {
   return(selected);
 }
 
+function is_shortcut(ev) {
+    var is_mac = navigator.appVersion.indexOf("Mac") !== -1;
+    var is_windows = navigator.appVersion.indexOf("Windows") !== -1;
+    var is_alternative_input = (is_mac && ev.altKey) || (is_windows && ev.ctrlKey && ev.altKey);
+    return !is_alternative_input && (ev.altKey || ev.metaKey || ev.ctrlKey);
+}
+
 function check_blacklist(sites_blacklist) {
   if (sites_blacklist) {
     var url = window.location.href;
@@ -475,8 +482,7 @@ function init(options) {
       var code = ev.keyCode;
       var ascii = String.fromCharCode(code);
       
-      if (!ev.altKey && !ev.metaKey && !ev.ctrlKey && 
-          ascii && code != keycodes.enter &&
+      if (!is_shortcut(ev) && ascii && code != keycodes.enter &&
           (code != keycodes.spacebar || search.mode)) {
         if (!search.mode && ascii == "/") {
           search.mode = 'text';
