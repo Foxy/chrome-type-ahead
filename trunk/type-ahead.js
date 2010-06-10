@@ -346,7 +346,7 @@ function check_blacklist(sites_blacklist) {
       var s = urls[i].replace(/^\s+|\s+$/g, '');
       // If URL starts with #, ignore it       
       // If URL starts with | assume it is a real regexp.
-      // Otherwise check if url begings with this string
+      // Otherwise compare with the URL (* wildcard is the only it understands)
       if (s[0] == '#') {
         continue;
       } else if (s[0] == '|') {
@@ -448,8 +448,13 @@ function init(options) {
         while ((textNode = nodeIterator.nextNode()) != search.element);
         var nextNodeFuncName = ev.shiftKey ? "previousNode" : "nextNode"; 
         while ((textNode = nodeIterator[nextNodeFuncName]()) != null) {
-          if (textNode.tagName == 'A' && textNode.href) {
-            textNode.focus();
+          if ((textNode.tagName == 'A' && textNode.href) || 
+               textNode.tagName == "INPUT" || 
+               textNode.tagName == "TEXTAREA" ||
+               textNode.tagName == "SELECT") {
+            // Hack: If we directly textNode.focus() the cursor is not 
+            // set in the field. Why? As a workaround, defer to a timeout 
+            setTimeout(function() { textNode.focus(); }, 0);
             break;
           }
         }
