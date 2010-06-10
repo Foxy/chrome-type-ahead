@@ -421,7 +421,12 @@ function init(options) {
         
       if (code == keycodes.backspace && search.mode) {
         if (search.text) {
-          search.text = search.text.substr(0, search.text.length-1);
+          if (!ev.ctrlKey) {
+            search.text = search.text.substr(0, search.text.length-1);
+          } else { /* delete last word */              
+            var index = search.text.lastIndexOf(' ');
+            search.text = (index == -1) ? "": search.text.substr(0, index+1);
+          }        
           processSearchWithOptions(true);
           showSearchBox(search);
         }
