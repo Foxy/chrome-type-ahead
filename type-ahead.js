@@ -27,7 +27,7 @@ var styles = '\
     right: 0;\
     margin: 0;\
     text-align: left;\
-    z-index: 9999;\
+    z-index: 2147483647;\
     //background-color: #FFC;\
     color: #000;\
     border-bottom: 1px solid #ccc;\
