@@ -57,6 +57,14 @@ function max(a, b) {
   return ((a > b) ? a : b); 
 }
 
+function escape_regexp(s) {        
+  var special = ["\\", "?", ".", "+", "{", "}", "[", "]", "$", "^"];
+  special.forEach(function(re) { 
+    s = s.replace(new RegExp("\\" + re, "g"), "\\" + re);
+  });
+  return s;
+}
+
 function get_current_zoom(doc) {
   var s = doc.body.parentElement.style.zoom;
   var zoom;
@@ -243,7 +251,7 @@ function processSearch(search, options) {
   var string = search.text.replace(/\s+/g, "(\\s|\240)+");
   if (options.starts_link_only)
     string = '^' + string;
-  var regexp =  new RegExp(string, options.case_sensitive ? 'g' : 'ig')
+  var regexp = new RegExp(escape_regexp(string), options.case_sensitive ? 'g' : 'ig')
   // currently Xpath does not support regexp matches. That would be great:
   // document.evaluate('//a//*[matches(text(), "regexp")]', document.body, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(N);
   var rootNodes = [window].concat(getRootNodes());
@@ -354,12 +362,8 @@ function check_blacklist(sites_blacklist) {
         if (url.match(regexp))
           return true;
       } else {
-        var s2 = s;
-        var special = ["\\", "?", ".", "+", "{", "}", "[", "]", "$", "^"];
-        special.forEach(function(re) { 
-          s2 = s2.replace(new RegExp("\\" + re, "g"), "\\" + re);
-        });
-        s2 = s2.replace(new RegExp("\\*", "g"), ".*");
+        var s2 = escape_regexp(s).replace(new RegExp("\\*", "g"), ".*");
+        
         var regexp = new RegExp('^' + s2 + '$');
         if (url.match(regexp))
           return true;
