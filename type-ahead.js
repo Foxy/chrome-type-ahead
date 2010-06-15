@@ -409,7 +409,11 @@ function init(options) {
   function setEvents(rootNode) {
     var doc = rootNode.contentDocument || rootNode;
     var body = rootNode.body;
-
+    
+    if (!body || !body.addEventListener) {
+        return;
+    }
+      
     body.addEventListener('keydown', function(ev) {
       if (isInputElementActive(doc))
         return;      
