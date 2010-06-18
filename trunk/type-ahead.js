@@ -58,7 +58,7 @@ function max(a, b) {
 }
 
 function escape_regexp(s) {        
-  var special = ["\\", "?", ".", "+", "{", "}", "[", "]", "$", "^"];
+  var special = ["\\", "?", ".", "+", "{", "}", "[", "]", "$", "^", "*"];
   special.forEach(function(re) { 
     s = s.replace(new RegExp("\\" + re, "g"), "\\" + re);
   });
@@ -248,10 +248,10 @@ function processSearch(search, options) {
   }
   
   var matchedElements = new Array();
-  var string = search.text.replace(/\s+/g, "(\\s|\240)+");
+  var string = escape_regexp(search.text).replace(/\s+/g, "(\\s|\240)+");
   if (options.starts_link_only)
     string = '^' + string;
-  var regexp = new RegExp(escape_regexp(string), options.case_sensitive ? 'g' : 'ig')
+  var regexp = new RegExp(string, options.case_sensitive ? 'g' : 'ig')
   // currently Xpath does not support regexp matches. That would be great:
   // document.evaluate('//a//*[matches(text(), "regexp")]', document.body, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(N);
   var rootNodes = [window].concat(getRootNodes());
