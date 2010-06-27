@@ -1,3 +1,12 @@
+chrome-type-ahead (0.3) unstable; urgency=low
+
+  * issue84: null body.addEventListener on some pages
+  * issue86: Odd non-match in a search
+  * issue83: Don't search regexps
+  * issue81: fix z-index
+
+ --  <tokland@gmail.com>  Sun, 27 Jun 2010 22:48:07 +0200
+
 chrome-type-ahead (0.2.9) unstable; urgency=low
 
   * Fix issue80: bug with blacklist using '*' wildcards
