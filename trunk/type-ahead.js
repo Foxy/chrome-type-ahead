@@ -260,9 +260,10 @@ function processSearch(search, options) {
     if (!doc || !doc.body)
       continue;
     var frame = rootNodes[i].contentWindow || rootNodes[i];
+    var regexp2 = new RegExp(regexp);
 
     function match(textNode) {
-      if (!regexp.test(textNode.data))
+      if (!regexp2.test(textNode.data))
         return NodeFilter.FILTER_REJECT;
       var anchor = up(textNode, 'a');
       if ((search.mode == 'links' && !anchor) || 
