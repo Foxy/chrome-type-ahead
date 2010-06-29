@@ -1,3 +1,3 @@
 #!/bin/sh
 set -e
-crxmake --pack-extension=.
+crxmake --pack-extension=$(dirname $(readlink -f $0))

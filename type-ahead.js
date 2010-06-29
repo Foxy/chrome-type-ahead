@@ -57,10 +57,11 @@ function max(a, b) {
   return ((a > b) ? a : b); 
 }
 
-function escape_regexp(s) {        
+function escape_regexp(s, ignore) {        
   var special = ["\\", "?", ".", "+", "{", "}", "[", "]", "$", "^", "*"];
-  special.forEach(function(re) { 
-    s = s.replace(new RegExp("\\" + re, "g"), "\\" + re);
+  special.forEach(function(re) {
+    if (!ignore || ignore.indexOf(re) < 0) 
+      s = s.replace(new RegExp("\\" + re, "g"), "\\" + re);
   });
   return s;
 }
@@ -363,7 +364,7 @@ function check_blacklist(sites_blacklist) {
         if (url.match(regexp))
           return true;
       } else {
-        var s2 = escape_regexp(s).replace(new RegExp("\\*", "g"), ".*");
+        var s2 = escape_regexp(s, ["*"]).replace(new RegExp("\\*", "g"), ".*");
         
         var regexp = new RegExp('^' + s2 + '$');
         if (url.match(regexp))
