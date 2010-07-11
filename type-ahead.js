@@ -491,7 +491,7 @@ function init(options) {
       }
       
       stopEvent(ev);
-    }, options.override_keybindings);
+    }, false);
     
     body.addEventListener('keypress', function(ev) {
       if (isInputElementActive(doc))
@@ -522,7 +522,7 @@ function init(options) {
         showSearchBox(search);
         stopEvent(ev)
       }
-    }, options.override_keybindings);
+    }, false);
  
     body.addEventListener('mousedown', function(ev) {
       if (search.mode)
@@ -553,7 +553,6 @@ var options = {
   search_in_selects: false,
   starts_link_only: false,
   sites_blacklist: '',
-  override_keybindings: false
 };
 
 
@@ -567,7 +566,6 @@ if (chrome.extension) {
       case_sensitive: (response.case_sensitive == '1'),
       search_in_selects: (response.search_in_selects == '1'),
       starts_link_only: (response.starts_link_only == '1'),
-      override_keybindings: (response.override_keybindings == '1'),
     };
     init(options);
   });
