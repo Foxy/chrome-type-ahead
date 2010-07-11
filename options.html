@@ -29,6 +29,7 @@
         }
         save_string("direct_search_mode");
         save_boolean("case_sensitive");
+        save_boolean("override_keybingings");
         save_boolean("search_in_selects");
         save_boolean("starts_link_only");
         save_string("sites_blacklist");                 
@@ -45,6 +46,7 @@
           field.value = localStorage[name] || '';
         }
         restore_string("direct_search_mode");
+        restore_boolean("override_keybingings");
         restore_boolean("case_sensitive");
         restore_boolean("search_in_selects");
         restore_boolean("starts_link_only");
@@ -67,9 +69,14 @@
         Direct search state
       </label>
       <br />
+      <label for="override_keybingings"> 
+        <input id="override_keybingings" type="checkbox" value="1" />
+        Override default page key-bindings
+      </label>
+      <br />
       <label for="case_sensitive"> 
         <input id="case_sensitive" type="checkbox" value="1" />
-        Search case-sensitive strings
+        Case-sensitive search (distinguish uppercase from lowercase)
       </label>
       <br />
       <label for="search_in_selects"> 
