@@ -252,7 +252,9 @@ function processSearch(search, options) {
   var string = escape_regexp(search.text).replace(/\s+/g, "(\\s|\240)+");
   if (options.starts_link_only)
     string = '^' + string;
-  var regexp = new RegExp(string, options.case_sensitive ? 'g' : 'ig')
+  // If string is lower case, search will be case-unsenstive.
+  // If string is upper case, search will be case-senstive.
+  var regexp = new RegExp(string, string == string.toLowerCase() ? 'ig' : 'g')
   // currently Xpath does not support regexp matches. That would be great:
   // document.evaluate('//a//*[matches(text(), "regexp")]', document.body, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null).snapshotItem(N);
   var rootNodes = [window].concat(getRootNodes());
@@ -402,7 +404,6 @@ function init(options) {
    
   function processSearchWithOptions(blur_unless_found) {
     return processSearch(search, { 
-      case_sensitive: options["case_sensitive"], 
       search_links: (search.mode == 'links'),
       search_in_selects: options["search_in_selects"],
       starts_link_only: options["starts_link_only"],
@@ -551,7 +552,6 @@ function init(options) {
 /* Default options */
 var options = {
   direct_search_mode: 'text',
-  case_sensitive: false,
   search_in_selects: false,
   starts_link_only: false,
   sites_blacklist: '',
@@ -565,7 +565,6 @@ if (chrome.extension) {
     options = {
       direct_search_mode: response.direct_search_mode,
       sites_blacklist: response.sites_blacklist,
-      case_sensitive: (response.case_sensitive == '1'),
       search_in_selects: (response.search_in_selects == '1'),
       starts_link_only: (response.starts_link_only == '1'),
     };
