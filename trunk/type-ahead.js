@@ -387,6 +387,8 @@ function init(options) {
     "g": 71,
     "f3": 114,
     "f4": 115,
+    "up": 38,
+    "down": 40,
   };
 
   function clearSearch(clearRanges) {
@@ -501,8 +503,8 @@ function init(options) {
         return;
       var code = ev.keyCode;
       var ascii = String.fromCharCode(code);
-      
-      if (!is_shortcut(ev) && ascii && code != keycodes.enter &&
+      if (!is_shortcut(ev) && ascii && 
+          [keycodes.enter, keycodes.up, keycodes.down].indexOf(code) == -1 &&
           (code != keycodes.spacebar || search.mode)) {
         if (!search.mode && ascii == "/") {
           search.mode = 'text';
