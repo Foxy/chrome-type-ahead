@@ -273,9 +273,9 @@ function processSearch(search, options) {
           !isVisible(textNode.parentNode) ||
            up(textNode.parentNode, 'script'))
         return NodeFilter.FILTER_REJECT;
-      var option = up(textNode.parentNode, 'option');
-      if (option && !options.search_in_selects)
-        return NodeFilter.FILTER_REJECT;
+      //var option = up(textNode.parentNode, 'option');
+      //if (option && !options.search_in_selects)
+      //  return NodeFilter.FILTER_REJECT;
       return NodeFilter.FILTER_ACCEPT;
     }
   
@@ -405,7 +405,6 @@ function init(options) {
   function processSearchWithOptions(blur_unless_found) {
     return processSearch(search, { 
       search_links: (search.mode == 'links'),
-      search_in_selects: options["search_in_selects"],
       starts_link_only: options["starts_link_only"],
       blur_unless_found: blur_unless_found
     });    
@@ -552,7 +551,6 @@ function init(options) {
 /* Default options */
 var options = {
   direct_search_mode: 'text',
-  search_in_selects: false,
   starts_link_only: false,
   sites_blacklist: '',
 };
@@ -565,7 +563,6 @@ if (chrome.extension) {
     options = {
       direct_search_mode: response.direct_search_mode,
       sites_blacklist: response.sites_blacklist,
-      search_in_selects: (response.search_in_selects == '1'),
       starts_link_only: (response.starts_link_only == '1'),
     };
     init(options);
