@@ -1,3 +1,10 @@
+chrome-type-ahead (0.3.2) unstable; urgency=low
+
+  * Implement a less-style in case-sensitivity/insensitivity 
+  * Remove option: search in options (true by default)
+
+ --  <tokland@gmail.com>  Wed, 28 Jul 2010 16:16:10 +0200
+
 chrome-type-ahead (0.3.1) unstable; urgency=low
 
   * issue87: Blacklist not working anymore 
