@@ -28,7 +28,6 @@
           localStorage[name] = field.value || '';
         }
         save_string("direct_search_mode");
-        save_boolean("search_in_selects");
         save_boolean("starts_link_only");
         save_string("sites_blacklist");                 
         feedback();
@@ -44,7 +43,6 @@
           field.value = localStorage[name] || '';
         }
         restore_string("direct_search_mode");
-        restore_boolean("search_in_selects");
         restore_boolean("starts_link_only");
         restore_string("sites_blacklist");
         set_blacklist_state();
