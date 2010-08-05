@@ -1,3 +1,9 @@
+chrome-type-ahead (0.3.3) unstable; urgency=low
+
+  * issue92: fix options save 
+
+ --  <tokland@gmail.com>  Thu, 05 Aug 2010 10:16:13 +0200
+
 chrome-type-ahead (0.3.2) unstable; urgency=low
 
   * Implement a less-style in case-sensitivity/insensitivity 
