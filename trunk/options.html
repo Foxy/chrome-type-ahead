@@ -9,15 +9,7 @@
           status.innerHTML = "";
         }, 750);
       }
-      
-      function set_blacklist_state() {
-        var blacklist = document.getElementById('sites_blacklist')
-        if (document.getElementById("direct_search_mode").value != 'disabled')
-          blacklist.removeAttribute('disabled');
-        else
-          blacklist.setAttribute('disabled', 'disabled');
-      }
-      
+            
       function save_options() {
         function save_boolean(name) {
           var checkbox = document.getElementById(name);
@@ -45,7 +37,6 @@
         restore_string("direct_search_mode");
         restore_boolean("starts_link_only");
         restore_string("sites_blacklist");
-        set_blacklist_state();
       }
     </script>
   </head>
@@ -55,7 +46,7 @@
         
     <div id="options">
       <label for="direct_search_mode">
-        <select id="direct_search_mode" onchange="set_blacklist_state()">
+        <select id="direct_search_mode">
           <option value="text">Text</option>
           <option value="links">Links</option>
           <option value="disabled">Disabled</option>
@@ -69,7 +60,7 @@
       </label>
       <h3>Blacklisted sites</h3>
       <label for="sites_blacklist"> 
-        Add URLs for sites for which direct search will be disabled. Advanced users can use regular-expressions (begin the line with <strong>|</strong>).
+        Add URLs for those sites where the extension will be completely disabled. Advanced users can use regular-expressions (begin the line with <strong>|</strong>).
       </label>
       <br />
       <textarea id="sites_blacklist" cols="60" rows="10"></textarea>
