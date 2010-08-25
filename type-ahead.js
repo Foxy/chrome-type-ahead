@@ -58,7 +58,7 @@ function max(a, b) {
 }
 
 function escape_regexp(s, ignore) {        
-  var special = ["\\", "?", ".", "+", "{", "}", "[", "]", "$", "^", "*"];
+  var special = ["\\", "?", ".", "+", "(", ")", "{", "}", "[", "]", "$", "^", "*"];
   special.forEach(function(re) {
     if (!ignore || ignore.indexOf(re) < 0) 
       s = s.replace(new RegExp("\\" + re, "g"), "\\" + re);
