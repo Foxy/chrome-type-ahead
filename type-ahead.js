@@ -266,7 +266,7 @@ function processSearch(search, options) {
     var regexp2 = new RegExp(regexp);
 
     function match(textNode) {
-      if (!regexp2.test(textNode.data))
+      if (!textNode.data.match(regexp2))
         return NodeFilter.FILTER_REJECT;
       var anchor = up(textNode, 'a');
       if ((search.mode == 'links' && !anchor) || 
@@ -278,13 +278,8 @@ function processSearch(search, options) {
       //  return NodeFilter.FILTER_REJECT;
       return NodeFilter.FILTER_ACCEPT;
     }
-  
-    var nodeIterator = doc.createNodeIterator(
-      doc.body,
-      NodeFilter.SHOW_TEXT,
-      match,
-      true
-    );    
+
+    var nodeIterator = doc.createNodeIterator(doc.body, NodeFilter.SHOW_TEXT, match, true);
       
     while ((textNode = nodeIterator.nextNode()) != null) {
       var anchor = up(textNode, 'a');
