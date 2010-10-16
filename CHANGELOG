@@ -1,3 +1,9 @@
+chrome-type-ahead (0.3.4) unstable; urgency=low
+
+  * issue97: fix for newer (>=8.0) releases
+
+ --  <tokland@gmail.com>  Sat, 16 Oct 2010 18:58:48 +0200
+
 chrome-type-ahead (0.3.3) unstable; urgency=low
 
   * issue92: fix options save 
