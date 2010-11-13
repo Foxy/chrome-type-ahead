@@ -288,8 +288,8 @@ function processSearch(search, options) {
       var result;
       while (match = regexp2.exec(textNode.data)) {
         result = {doc: doc, frame: frame, node: textNode, 
-                      anchor: anchor, option: option, 
-                      start: match.index, end: regexp2.lastIndex};
+                  anchor: anchor, option: option, 
+                  start: match.index, end: regexp2.lastIndex};
         matchedElements.push(result);
       }          
     }
@@ -319,10 +319,11 @@ function processSearch(search, options) {
     selection.addRange(range);
     search.range = range;
     selected = true;
-    if (result.anchor) {
+    if (result.anchor)
       result.anchor.focus();
-    } else {
-      var rect = range.getBoundingClientRect();
+    // Apparently A's with empty href don't trigger the window scroll when focused
+    if (!result.anchor || !result.anchor.href) {
+      var rect = range.getBoundingClientRect();      
       var doc_height = window.innerHeight;
       var zoom = get_current_zoom(result.doc);
       if (zoom*rect.top < (doc_height * 1) / 6.0 || zoom*rect.bottom > (doc_height * 5) / 6.0) {  
