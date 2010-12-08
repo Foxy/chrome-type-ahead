@@ -1,6 +1,7 @@
 chrome-type-ahead (0.3.4) unstable; urgency=low
 
   * issue97: fix for newer (>=8.0) releases
+  * issue103: don't activate on object tags (usually flash)
 
  --  <tokland@gmail.com>  Sat, 16 Oct 2010 18:58:48 +0200
 
