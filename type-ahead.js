@@ -411,7 +411,7 @@ function init(options) {
     if (!body || !body.addEventListener) {
         return;
     }
-      
+
     body.addEventListener('keydown', function(ev) {
       if (isInputElementActive(doc))
         return;      
@@ -443,7 +443,7 @@ function init(options) {
                  (selectedAnchor || selectOnchange(search.select))) {
         clearSearch(true);
         return;
-      } else if (code == keycodes.tab && !selectedAnchor) {
+      } else if (search.mode && code == keycodes.tab && !selectedAnchor) {
         var nodeIterator = doc.createNodeIterator(
             doc.body,
             NodeFilter.SHOW_ELEMENT,
@@ -467,7 +467,7 @@ function init(options) {
         clearSearch(true);
         stopEvent(ev);
         return;
-      } else if (code == keycodes.tab) {
+      } else if (search.mode && code == keycodes.tab) {
         clearSearch(true);
         return;
       } else if (code == keycodes.f4 && search.mode) {
