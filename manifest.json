@@ -10,7 +10,8 @@
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*", "ftp://*/*", "file://*/*"],
-      "js": ["type-ahead.js"]
+      "js": ["type-ahead.js"],
+      "run_at": "document_start"
     }
   ],
   "icons": {
