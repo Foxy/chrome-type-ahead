@@ -558,11 +558,12 @@ if (chrome.extension) {
       sites_blacklist: response.sites_blacklist,
       starts_link_only: (response.starts_link_only == '1'),
     };
-    init(options);
-  });
-} else {
-  // So this code can be used as stand-alone script (using default options)
-  window.addEventListener('load', function(ev) {
-    init(options);
   });
 } 
+
+document.addEventListener('DOMSubtreeModified', function() {
+  if (document.body) {
+    document.removeEventListener('DOMSubtreeModified', arguments.callee);
+    init(options);      
+  }
+});
