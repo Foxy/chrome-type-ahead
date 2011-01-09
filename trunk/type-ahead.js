@@ -561,9 +561,10 @@ if (chrome.extension) {
   });
 } 
 
-document.addEventListener('DOMSubtreeModified', function() {
+// User setInterval to add events to document.body as soon as possible
+interval_id = setInterval(function() {
   if (document.body) {
-    document.removeEventListener('DOMSubtreeModified', arguments.callee);
+    clearInterval(interval_id);
     init(options);      
   }
-});
+}, 100);
