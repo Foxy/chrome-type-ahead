@@ -1,3 +1,11 @@
+chrome-type-ahead (0.3.5) unstable; urgency=low
+
+  * new feature: start search on viewport
+  * issue105: fix tab when search mode is off
+  * issue106: set events on DOM as soon as possible
+
+ --  <tokland@gmail.com>  Tue, 11 Jan 2011 14:53:09 +0100
+
 chrome-type-ahead (0.3.4) unstable; urgency=low
 
   * issue97: fix for newer (>=8.0) releases
