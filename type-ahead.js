@@ -75,7 +75,7 @@ function get_current_zoom(doc) {
     zoom = parseFloat(s.replace(',', '.'));
   else
     zoom = 1;
-  return (zoom);
+  return zoom;
 }
 
 function addStyle(css) {
@@ -236,6 +236,24 @@ function showSearchBox(search) {
   }
 }
 
+function elementInViewport(el) {
+  var top = el.offsetTop;
+  var left = el.offsetLeft;
+  var width = el.offsetWidth;
+  var height = el.offsetHeight;
+
+  while(el.offsetParent) {
+    el = el.offsetParent;
+    top += el.offsetTop;
+    left += el.offsetLeft;
+  }
+
+  return (top >= window.pageYOffset &&
+          left >= window.pageXOffset &&
+          (top + height) <= (window.pageYOffset + window.innerHeight) &&
+          (left + width) <= (window.pageXOffset + window.innerWidth));
+}
+
 function processSearch(search, options) {
   var selected = false;    
   var selectedAnchor = getSelectedAnchor();
@@ -298,11 +316,25 @@ function processSearch(search, options) {
   search.total = matchedElements.length;
 
   if (matchedElements.length > 0) {
-    var index = search.index % matchedElements.length;
+    var index;
+    
+    // If this is the first search, start on the first match on viewport
+    if (search.search_in_viewport) {
+      index = 0;
+      while (index < matchedElements.length && 
+             !elementInViewport(matchedElements[index].node.parentNode)) {
+        index += 1;
+      }            
+    } else {
+      index = search.index;      
+    }    
+
+    index = index % matchedElements.length;
     if (index < 0)
       index += matchedElements.length;
-    search.nmatch = index + 1;      
-    var result = matchedElements[index];
+    var result = matchedElements[index];    
+    search.index = index;
+    search.nmatch = index + 1;
     search.element = result.node.parentNode;
     if (result.option) {
       result.option.selected = 'selected';
@@ -388,7 +420,8 @@ function init(options) {
   };
 
   function clearSearch(clearRanges) {
-    search = {mode: null, text: '', index: 0, matches: 0, total: 0, select: null};
+    search = {mode: null, text: '', index: 0, search_in_viewport: true, 
+              matches: 0, total: 0, select: null};
     if (clearRanges) { 
       selection = window.getSelection();
       selection.removeAllRanges();
@@ -478,7 +511,8 @@ function init(options) {
       } else if (search.text && (code == keycodes.f3 ||
                                  (code == keycodes.g && (ev.ctrlKey || ev.metaKey)) ||
                                  (code == keycodes.n && ev.altKey) ||
-                                 (code == keycodes.p && ev.altKey))) { 
+                                 (code == keycodes.p && ev.altKey))) {
+        search.search_in_viewport = false; 
         search.index += (ev.shiftKey || code == keycodes.p) ? -1 : +1;
         processSearchWithOptions(true);
         showSearchBox(search);
@@ -536,8 +570,9 @@ function init(options) {
         setEvents(ev.target.contentDocument);
       });
     }
-    else if (!rootNode.contentDocument || rootNode.contentDocument.readyState == 'complete')
+    else if (!rootNode.contentDocument || rootNode.contentDocument.readyState == 'complete') {
       setEvents(rootNode.contentDocument ? rootNode.contentDocument : rootNode);
+    }
   } 
 }
 
@@ -551,7 +586,7 @@ var options = {
 
 /* Main */
 
-if (chrome.extension) {
+if (typeof(chrome) == "object" && chrome.extension) {
   chrome.extension.sendRequest({'get_options': true}, function(response) {
     options = {
       direct_search_mode: response.direct_search_mode,
@@ -565,6 +600,6 @@ if (chrome.extension) {
 interval_id = setInterval(function() {
   if (document.body) {
     clearInterval(interval_id);
-    init(options);      
+    init(options);
   }
 }, 100);
