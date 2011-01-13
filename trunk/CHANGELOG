@@ -1,3 +1,9 @@
+chrome-type-ahead (0.3.6) unstable; urgency=low
+
+  * issue108: fix options load 
+
+ --  <tokland@gmail.com>  Thu, 13 Jan 2011 12:12:21 +0100
+
 chrome-type-ahead (0.3.5) unstable; urgency=low
 
   * new feature: start search on viewport
