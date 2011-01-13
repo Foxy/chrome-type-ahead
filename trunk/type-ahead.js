@@ -381,7 +381,7 @@ function is_shortcut(ev) {
 function check_blacklist(sites_blacklist) {
   if (sites_blacklist) {
     var url = window.location.href;
-    var urls = options.sites_blacklist.split('\n');    
+    var urls = options.sites_blacklist.split('\n');
     for (var i=0; i < urls.length; i++) {
       var s = urls[i].replace(/^\s+|\s+$/g, '');
       // If URL starts with #, ignore it       
@@ -583,8 +583,15 @@ var options = {
   sites_blacklist: '',
 };
 
-
-/* Main */
+function main(options) {
+  // Use setInterval to add events to document.body as soon as possible
+  interval_id = setInterval(function() {
+    if (document.body) {
+      clearInterval(interval_id);
+      init(options);
+    }
+  }, 100);
+}
 
 if (typeof(chrome) == "object" && chrome.extension) {
   chrome.extension.sendRequest({'get_options': true}, function(response) {
@@ -593,13 +600,8 @@ if (typeof(chrome) == "object" && chrome.extension) {
       sites_blacklist: response.sites_blacklist,
       starts_link_only: (response.starts_link_only == '1'),
     };
+    main(options);
   });
-} 
-
-// User setInterval to add events to document.body as soon as possible
-interval_id = setInterval(function() {
-  if (document.body) {
-    clearInterval(interval_id);
-    init(options);
-  }
-}, 100);
+} else {  
+  main(options);
+}
