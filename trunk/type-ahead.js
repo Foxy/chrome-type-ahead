@@ -145,7 +145,7 @@ function clearRanges() {
 }
 
 function getActiveElement(doc) {
-	  return doc.activeElement || doc._tafActiveElement;
+  return doc.activeElement || doc._tafActiveElement;
 }
 
 function getSelectedAnchor(doc) {
@@ -163,7 +163,7 @@ function isInputElementActive(doc) {
   if (!element)
     return;
   var name = element.tagName.toLowerCase();
-  if (["input", "select", "textarea", "object"].indexOf(name) >= 0)
+  if (["input", "select", "textarea", "object", "embed"].indexOf(name) >= 0)
     return true;
   return (upMatch(element, function(el) {
       if (!el.getAttribute || el.getAttribute('contenteditable') == 'false')
