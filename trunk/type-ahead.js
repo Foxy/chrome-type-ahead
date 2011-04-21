@@ -207,7 +207,7 @@ function clearSearchBox() {
   }
 }
 
-function showSearchBox(search) {
+function showSearchBox(search, clear_function) {
   var colors = {
     text: {ok: '#FF5', ko: '#F55'},
     links: {ok: '#DDF', ko: '#F55'},
@@ -234,6 +234,11 @@ function showSearchBox(search) {
       box.style['top'] = ((topval < 100) ? topval : 100)  + 'px';
     }
   }
+  if (search.timeout_id)
+    clearTimeout(search.timeout_id);  
+  search.timeout_id = setTimeout(function() {
+    clear_function(true); 
+  }, 5000);
 }
 
 function elementInViewport(el) {
@@ -291,9 +296,6 @@ function processSearch(search, options) {
           !isVisible(textNode.parentNode) ||
            up(textNode.parentNode, 'script'))
         return NodeFilter.FILTER_REJECT;
-      //var option = up(textNode.parentNode, 'option');
-      //if (option && !options.search_in_selects)
-      //  return NodeFilter.FILTER_REJECT;
       return NodeFilter.FILTER_ACCEPT;
     }
 
@@ -418,8 +420,14 @@ function init(options) {
     "f3": 114,
     "f4": 115,
   };
+  
+  var search = {};
 
   function clearSearch(clearRanges) {
+    if (search.timeout_id) {
+      clearTimeout(search.timeout_id);
+    }
+      
     search = {mode: null, text: '', index: 0, search_in_viewport: true, 
               matches: 0, total: 0, select: null};
     if (clearRanges) { 
@@ -467,7 +475,7 @@ function init(options) {
             search.text = (index == -1) ? "": search.text.substr(0, index+1);
           }        
           processSearchWithOptions(true);
-          showSearchBox(search);
+          showSearchBox(search, clearSearchBox);
         }
       } else if (code == keycodes.escape && search.mode) {
         clearSearch(true);
@@ -507,7 +515,7 @@ function init(options) {
         search.mode = (search.mode == 'text') ? 'links' : 'text'
         search.index = 0;
         processSearchWithOptions(true);
-        showSearchBox(search);
+        showSearchBox(search, clearSearchBox);
       } else if (search.text && (code == keycodes.f3 ||
                                  (code == keycodes.g && (ev.ctrlKey || ev.metaKey)) ||
                                  (code == keycodes.n && ev.altKey) ||
@@ -515,7 +523,7 @@ function init(options) {
         search.search_in_viewport = false; 
         search.index += (ev.shiftKey || code == keycodes.p) ? -1 : +1;
         processSearchWithOptions(true);
-        showSearchBox(search);
+        showSearchBox(search, clearSearchBox);
       } else {
         return;
       }
@@ -548,7 +556,7 @@ function init(options) {
           search.text += ascii;
         }
         processSearchWithOptions(true)
-        showSearchBox(search);
+        showSearchBox(search, clearSearchBox);
         stopEvent(ev)
       }
     }, false);
