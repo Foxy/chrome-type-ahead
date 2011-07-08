@@ -1,3 +1,10 @@
+chrome-type-ahead (0.3.7) unstable; urgency=low
+
+  * issue126: fix in google+
+  * issue110: add timeout 
+
+ --  <tokland@gmail.com>  Fri, 08 Jul 2011 18:51:06 +0200
+
 chrome-type-ahead (0.3.6) unstable; urgency=low
 
   * issue108: fix options load 
