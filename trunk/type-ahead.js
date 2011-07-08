@@ -168,7 +168,7 @@ function isInputElementActive(doc) {
   return (upMatch(element, function(el) {
       if (!el.getAttribute || el.getAttribute('contenteditable') == 'false')
         return null;
-      return (el.getAttribute('contenteditable') == 'true'); 
+      return el.getAttribute('contenteditable'); 
     }))
 }
 

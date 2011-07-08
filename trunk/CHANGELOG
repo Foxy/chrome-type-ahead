@@ -1,3 +1,9 @@
+chrome-type-ahead (0.3.8) unstable; urgency=low
+
+  * issue126: really, fix the google+ issue
+
+ --  <tokland@gmail.com>  Fri, 08 Jul 2011 23:11:59 +0200
+
 chrome-type-ahead (0.3.7) unstable; urgency=low
 
   * issue126: fix in google+
