@@ -475,7 +475,7 @@ function init(options) {
             search.text = (index == -1) ? "": search.text.substr(0, index+1);
           }        
           processSearchWithOptions(true);
-          showSearchBox(search, clearSearchBox);
+          showSearchBox(search, clearSearch);
         }
       } else if (code == keycodes.escape && search.mode) {
         clearSearch(true);
@@ -515,7 +515,7 @@ function init(options) {
         search.mode = (search.mode == 'text') ? 'links' : 'text'
         search.index = 0;
         processSearchWithOptions(true);
-        showSearchBox(search, clearSearchBox);
+        showSearchBox(search, clearSearch);
       } else if (search.text && (code == keycodes.f3 ||
                                  (code == keycodes.g && (ev.ctrlKey || ev.metaKey)) ||
                                  (code == keycodes.n && ev.altKey) ||
@@ -523,7 +523,7 @@ function init(options) {
         search.search_in_viewport = false; 
         search.index += (ev.shiftKey || code == keycodes.p) ? -1 : +1;
         processSearchWithOptions(true);
-        showSearchBox(search, clearSearchBox);
+        showSearchBox(search, clearSearch);
       } else {
         return;
       }
@@ -556,7 +556,7 @@ function init(options) {
           search.text += ascii;
         }
         processSearchWithOptions(true)
-        showSearchBox(search, clearSearchBox);
+        showSearchBox(search, clearSearch);
         stopEvent(ev)
       }
     }, false);
