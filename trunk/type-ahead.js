@@ -240,11 +240,13 @@ function showSearchBox(search, clear_function) {
       box.style['top'] = ((topval < 100) ? topval : 100)  + 'px';
     }
   }
-  if (search.timeout_id)
-    clearTimeout(search.timeout_id);  
-  search.timeout_id = setTimeout(function() {
-    clear_function(true); 
-  }, 5000);
+  if (search.timeout && search.timeout > 0) {
+    if (search.timeout_id)
+      clearTimeout(search.timeout_id);  
+    search.timeout_id = setTimeout(function() {
+      clear_function(true); 
+    }, search.timeout * 1000);
+  }
 }
 
 function elementInViewport(el) {
@@ -435,7 +437,7 @@ function init(options) {
     }
       
     search = {mode: null, text: '', index: 0, search_in_viewport: true, 
-              matches: 0, total: 0, select: null};
+              matches: 0, total: 0, select: null, timeout: parseInt(options.timeout)};
     if (clearRanges) { 
       selection = window.getSelection();
       selection.removeAllRanges();
@@ -559,7 +561,7 @@ function init(options) {
           search.mode = options.direct_search_mode == 'links' ? 'links' : 'text';
           search.text += ascii;
         } else if (search.mode) {
-          if (isSearchBoxVisible) {
+          if (isSearchBoxVisible()) {
             search.text += ascii;
           } else {
             search.text = ascii;
@@ -617,6 +619,7 @@ if (typeof(chrome) == "object" && chrome.extension) {
       direct_search_mode: response.direct_search_mode,
       sites_blacklist: response.sites_blacklist,
       starts_link_only: (response.starts_link_only == '1'),
+      timeout: response.timeout
     };
     main(options);
   });
