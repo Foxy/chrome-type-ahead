@@ -207,6 +207,12 @@ function clearSearchBox() {
   }
 }
 
+function isSearchBoxVisible() {
+  var box = document.getElementById('type-ahead-box');
+  return (box && box.style.display != 'none');
+}
+
+
 function showSearchBox(search, clear_function) {
   var colors = {
     text: {ok: '#FF5', ko: '#F55'},
@@ -475,7 +481,7 @@ function init(options) {
             search.text = (index == -1) ? "": search.text.substr(0, index+1);
           }        
           processSearchWithOptions(true);
-          showSearchBox(search, clearSearch);
+          showSearchBox(search, clearSearchBox);
         }
       } else if (code == keycodes.escape && search.mode) {
         clearSearch(true);
@@ -515,7 +521,7 @@ function init(options) {
         search.mode = (search.mode == 'text') ? 'links' : 'text'
         search.index = 0;
         processSearchWithOptions(true);
-        showSearchBox(search, clearSearch);
+        showSearchBox(search, clearSearchBox);
       } else if (search.text && (code == keycodes.f3 ||
                                  (code == keycodes.g && (ev.ctrlKey || ev.metaKey)) ||
                                  (code == keycodes.n && ev.altKey) ||
@@ -523,7 +529,7 @@ function init(options) {
         search.search_in_viewport = false; 
         search.index += (ev.shiftKey || code == keycodes.p) ? -1 : +1;
         processSearchWithOptions(true);
-        showSearchBox(search, clearSearch);
+        showSearchBox(search, clearSearchBox);
       } else {
         return;
       }
@@ -553,10 +559,14 @@ function init(options) {
           search.mode = options.direct_search_mode == 'links' ? 'links' : 'text';
           search.text += ascii;
         } else if (search.mode) {
-          search.text += ascii;
+          if (isSearchBoxVisible) {
+            search.text += ascii;
+          } else {
+            search.text = ascii;
+          }
         }
         processSearchWithOptions(true)
-        showSearchBox(search, clearSearch);
+        showSearchBox(search, clearSearchBox);
         stopEvent(ev)
       }
     }, false);
