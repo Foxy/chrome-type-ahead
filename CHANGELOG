@@ -1,3 +1,10 @@
+chrome-type-ahead (0.3.9) unstable; urgency=low
+
+  * Timeout configurable.
+  * When timeout is reached, hide search box but don't clear current search.
+
+ --  <tokland@gmail.com>  Tue, 26 Jul 2011 19:24:58 +0200
+
 chrome-type-ahead (0.3.8) unstable; urgency=low
 
   * issue126: really, fix the google+ issue
