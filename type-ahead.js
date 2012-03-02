@@ -28,7 +28,6 @@ var styles = '\
     margin: 0;\
     text-align: left;\
     z-index: 2147483647;\
-    //background-color: #FFC;\
     color: #000;\
     border-bottom: 1px solid #ccc;\
     border-bottom: 1px solid rgba(0,0,0,0.3);\
@@ -215,8 +214,8 @@ function isSearchBoxVisible() {
 
 function showSearchBox(search, clear_function) {
   var colors = {
-    text: {ok: '#FF5', ko: '#F55'},
-    links: {ok: '#DDF', ko: '#F55'},
+    text: {ok: search.options.color_text, ko: search.options.color_notfound},
+    links: {ok: search.options.color_link, ko: search.options.color_notfound},
   }
   var box = document.getElementById('type-ahead-box');
   if (!box) { 
@@ -435,9 +434,9 @@ function init(options) {
     if (search.timeout_id) {
       clearTimeout(search.timeout_id);
     }
-      
     search = {mode: null, text: '', index: 0, search_in_viewport: true, 
-              matches: 0, total: 0, select: null, timeout: parseInt(options.timeout)};
+              matches: 0, total: 0, select: null, 
+              timeout: parseInt(options.timeout), options: options};
     if (clearRanges) { 
       selection = window.getSelection();
       selection.removeAllRanges();
@@ -597,10 +596,13 @@ function init(options) {
 }
 
 /* Default options */
-var options = {
+var default_options = {
   direct_search_mode: 'text',
   starts_link_only: false,
   sites_blacklist: '',
+  color_link: '#DDF',
+  color_text: '#FF5',
+  color_notfound: 'F55'
 };
 
 function main(options) {
@@ -613,13 +615,18 @@ function main(options) {
   }, 100);
 }
 
+options = default_options;
+
 if (typeof(chrome) == "object" && chrome.extension) {
   chrome.extension.sendRequest({'get_options': true}, function(response) {
     options = {
       direct_search_mode: response.direct_search_mode,
       sites_blacklist: response.sites_blacklist,
       starts_link_only: (response.starts_link_only == '1'),
-      timeout: response.timeout
+      timeout: response.timeout,
+      color_link: response.color_link || default_options.color_link,
+      color_text: response.color_text || default_options.color_text,
+      color_notfound: response.color_notfound  || default_options.color_notfound
     };
     main(options);
   });
