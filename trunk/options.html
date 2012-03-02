@@ -23,6 +23,9 @@
         save_boolean("starts_link_only");
         save_string("sites_blacklist");                 
         save_string("timeout");
+        save_string("color_link");
+        save_string("color_text");
+        save_string("color_notfound");
         feedback();
       }
 
@@ -31,14 +34,17 @@
           var checkbox = document.getElementById(name);
           checkbox.checked = localStorage[name] == '1';
         }
-        function restore_string(name) {
+        function restore_string(name, default_value) {
           var field = document.getElementById(name);
-          field.value = localStorage[name] || '';
+          field.value = localStorage[name] || default_value || "";
         }
         restore_string("direct_search_mode");
         restore_boolean("starts_link_only");
         restore_string("sites_blacklist");
         restore_string("timeout");
+        restore_string("color_link", '#DDF');
+        restore_string("color_text", '#FF5');
+        restore_string("color_notfound", 'F55');
       }
     </script>
   </head>
@@ -56,15 +62,37 @@
         Direct search state
       </label>
       <br />
+      
       <label for="starts_link_only"> 
         <input id="starts_link_only" type="checkbox" value="1" />
         Search only start of text when searching links
       </label>
       <br />
+      
       <label for="timeout"> 
         Timeout: <input id="timeout" type="text" size="2" />
         Hide search box after this time (in seconds). Leave emtpy to disable timeout. 
       </label>
+      <br />
+
+      <label for="color_link"> 
+        Color of the search box in link mode: 
+        <input id="color_link" type="text" value="" size="7" />
+      </label>
+      <br />
+
+      <label for="color_text"> 
+        Color of the search box in text mode: 
+        <input id="color_text" type="text" value="" size="7" />
+      </label>
+      <br />
+
+      <label for="color_notfound"> 
+        Color of the search box when no match 
+        <input id="color_notfound" type="text" value="" size="7" />
+      </label>
+      <br />
+      
       <h3>Blacklisted sites</h3>
       <label for="sites_blacklist"> 
         Add URLs for those sites where the extension will be completely disabled. Advanced users can use regular-expressions (begin the line with <strong>|</strong>).
