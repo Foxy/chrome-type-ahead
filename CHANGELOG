@@ -1,3 +1,9 @@
+chrome-type-ahead (0.4.0) unstable; urgency=low
+
+  * Box colors configurable (issue139).
+
+ --  <tokland@gmail.com>  Fri, 02 Mar 2012 11:16:29 +0100
+
 chrome-type-ahead (0.3.9) unstable; urgency=low
 
   * Timeout configurable.
