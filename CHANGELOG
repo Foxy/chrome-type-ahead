@@ -1,3 +1,9 @@
+chrome-type-ahead (0.4.1) unstable; urgency=low
+
+  * Update to Manifest v2 
+
+ --  <tokland@gmail.com>  Tue, 13 Nov 2012 15:07:38 +0100
+
 chrome-type-ahead (0.4.0) unstable; urgency=low
 
   * Box colors configurable (issue139).

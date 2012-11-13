@@ -1,7 +1,7 @@
 {
   "name": "Type-ahead-find",
   "description": "Find text or links as you type",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "manifest_version": 2,
   "background": {"scripts": ["background.js"]},
   "options_page": "options.html",
