@@ -2,11 +2,10 @@
   "name": "Type-ahead-find",
   "description": "Find text or links as you type",
   "version": "0.4.0",
-  "background_page": "background.html",
+  "manifest_version": 2,
+  "background": {"scripts": ["background.js"]},
   "options_page": "options.html",
-   "permissions": [
-    "tabs"
-  ],
+  "permissions": ["tabs", "storage"],
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*", "ftp://*/*", "file://*/*"],

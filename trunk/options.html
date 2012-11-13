@@ -1,55 +1,10 @@
 <html>
   <head>
     <title>Type-ahead-find options</title>
-    <script type="text/javascript">
-      function feedback() {
-        var status = document.getElementById("status");
-        status.innerHTML = "<i>Options saved</i>";
-        setTimeout(function() {
-          status.innerHTML = "";
-        }, 750);
-      }
-            
-      function save_options() {
-        function save_boolean(name) {
-          var checkbox = document.getElementById(name);
-          localStorage[name] = checkbox.checked ? '1': '0';
-        }
-        function save_string(name) {
-          var field = document.getElementById(name);
-          localStorage[name] = field.value || '';
-        }
-        save_string("direct_search_mode");
-        save_boolean("starts_link_only");
-        save_string("sites_blacklist");                 
-        save_string("timeout");
-        save_string("color_link");
-        save_string("color_text");
-        save_string("color_notfound");
-        feedback();
-      }
-
-      function restore_options() {
-        function restore_boolean(name) {
-          var checkbox = document.getElementById(name);
-          checkbox.checked = localStorage[name] == '1';
-        }
-        function restore_string(name, default_value) {
-          var field = document.getElementById(name);
-          field.value = localStorage[name] || default_value || "";
-        }
-        restore_string("direct_search_mode");
-        restore_boolean("starts_link_only");
-        restore_string("sites_blacklist");
-        restore_string("timeout");
-        restore_string("color_link", '#DDF');
-        restore_string("color_text", '#FF5');
-        restore_string("color_notfound", 'F55');
-      }
-    </script>
+    <script type="text/javascript" src="options.js"></script>
   </head>
     
-  <body onload="restore_options()">
+  <body>
     <h2>Options</h2>
         
     <div id="options">
@@ -99,10 +54,10 @@
       </label>
       <br />
       <textarea id="sites_blacklist" cols="60" rows="10"></textarea>
-      <br />Example: <i>http://mail.google.com/*</i><br/>
+      <br />Example: <i>https://mail.google.com/*</i><br/>
       <br />
       <br />
-      <button onclick="save_options()">Save</button>
+      <button id="save">Save</button>
       &nbsp;<span id="status"></span>
     </div>
    
@@ -119,9 +74,7 @@
     <h2>Issue 150</h2>
 
     <p>Although this extension tries to do the job the best it can, by no means it can work as well and fast as a core feature. <a href="http://code.google.com/p/chromium/issues/detail?id=150">Issue 150</a> was opened a long time asking for type-ahead to be implemented in Chromium, but -to everybody's surprise- the report was closed <b>the same day</b> with a <i>WontFix</i>. Dozens of angry comments didn't change that, so <b>all we can do now is star the issue</b>. If the issue makes its place amongst the most voted request maybe Chromium developers will rethink their decision.</p>
-
     <hr />
-        
     Check the <a href="http://code.google.com/p/chrome-type-ahead/">Chrome-ahead-find website</a> for more information about this extension.    
   </body>
 </html>
