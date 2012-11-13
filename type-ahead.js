@@ -393,18 +393,17 @@ function check_blacklist(sites_blacklist) {
     var urls = options.sites_blacklist.split('\n');
     for (var i=0; i < urls.length; i++) {
       var s = urls[i].replace(/^\s+|\s+$/g, '');
-      // If URL starts with #, ignore it       
-      // If URL starts with | assume it is a real regexp.
-      // Otherwise compare with the URL (* wildcard is the only it understands)
       if (s[0] == '#') {
+        // If URL starts with #, ignore it       
         continue;
       } else if (s[0] == '|') {
+        // If URL starts with | assume it is a real regexp.
         var regexp = new RegExp('^' + s.slice(1) + '$');
         if (url.match(regexp))
           return true;
       } else {
+      // Otherwise compare with the URL ('*' is the only wildcard available)
         var s2 = escape_regexp(s, ["*"]).replace(new RegExp("\\*", "g"), ".*");
-        
         var regexp = new RegExp('^' + s2 + '$');
         if (url.match(regexp))
           return true;
