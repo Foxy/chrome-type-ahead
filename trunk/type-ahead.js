@@ -180,7 +180,7 @@ function selectOnchange(select) {
   }
 }
 
-function setAlternativeActiveDocument(doc) { 
+function setAlternativeActiveDocument(doc) {
   function dom_trackActiveElement(evt) {
     if (evt && evt.target) { 
       doc._tafActiveElement = (evt.target == doc) ? null : evt.target;
@@ -191,7 +191,8 @@ function setAlternativeActiveDocument(doc) {
     doc._tafActiveElement = null;
   }
 
-  if (!doc.activeElement) {
+  if (doc._tafActiveElement == undefined && !doc.activeElement) {
+    doc._tafActiveElement = null;
     doc.addEventListener("focus", dom_trackActiveElement, true);
     doc.addEventListener("blur", dom_trackActiveElementLost, true);
   }
@@ -459,6 +460,8 @@ function init(options) {
         return;
     }
 
+    setAlternativeActiveDocument(doc);
+
     body.addEventListener('keydown', function(ev) {
       if (isInputElementActive(doc))
         return;      
@@ -575,8 +578,6 @@ function init(options) {
       if (search.mode)
         clearSearch(false);      
     }, false);
-    
-    setAlternativeActiveDocument(doc);
   }
 
   clearSearch(false);
@@ -614,6 +615,7 @@ function main(options) {
   }, 100);
 }
 
+setAlternativeActiveDocument(document);
 options = default_options;
 
 if (typeof(chrome) == "object" && chrome.extension) {
