@@ -1,3 +1,9 @@
+chrome-type-ahead (0.4.2rc) unstable; urgency=low
+
+  * issue146: call setAlternativeActiveDocument at the beginning  
+
+ --  <tokland@gmail.com>  Tue, 27 Nov 2012 18:17:25 +0100
+
 chrome-type-ahead (0.4.1) unstable; urgency=low
 
   * Update to Manifest v2 
