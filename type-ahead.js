@@ -462,7 +462,7 @@ function init(options) {
 
     setAlternativeActiveDocument(doc);
 
-    body.addEventListener('keydown', function(ev) {
+    doc.addEventListener('keydown', function(ev) {
       if (isInputElementActive(doc))
         return;      
         
@@ -540,7 +540,7 @@ function init(options) {
       stopEvent(ev);
     }, false);
     
-    body.addEventListener('keypress', function(ev) {
+    doc.addEventListener('keypress', function(ev) {
       if (isInputElementActive(doc))
         return;
       var blacklisted = check_blacklist(options.sites_blacklist);
@@ -574,7 +574,7 @@ function init(options) {
       }
     }, false);
  
-    body.addEventListener('mousedown', function(ev) {
+    doc.addEventListener('mousedown', function(ev) {
       if (search.mode)
         clearSearch(false);      
     }, false);
