@@ -114,7 +114,7 @@ function upMatch(element, matchFunction) {
 }
 
 function isVisible(element) {
-  while (element) {    
+  while (element && element.style) {    
     style = window.getComputedStyle(element);
     if (style && (style.getPropertyValue('display') == 'none' ||
                   style.getPropertyValue('visibility') == 'hidden'))
