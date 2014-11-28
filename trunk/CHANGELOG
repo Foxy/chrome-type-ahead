@@ -1,3 +1,7 @@
+chrome-type-ahead (0.4.3) unstable; urgency=low
+
+  * issue155: fix isVisible (TypeError: Failed to execute 'getComputedStyle')
+
 chrome-type-ahead (0.4.2) unstable; urgency=low
 
   * issue146: call setAlternativeActiveDocument at the beginning
