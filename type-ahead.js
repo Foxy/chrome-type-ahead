@@ -164,6 +164,8 @@ function isInputElementActive(doc) {
   var name = element.tagName.toLowerCase();
   if (["input", "select", "textarea", "object", "embed"].indexOf(name) >= 0)
     return true;
+  if (name.match(/-/)) // Web Components
+    return true;
   return (upMatch(element, function(el) {
       if (!el.getAttribute || el.getAttribute('contenteditable') == 'false')
         return null;
