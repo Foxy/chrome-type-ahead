@@ -1,3 +1,7 @@
+chrome-type-ahead (0.4.4) unstable; urgency=low
+
+  * Fix to allow text entry in web components (custom elements)
+
 chrome-type-ahead (0.4.3) unstable; urgency=low
 
   * issue155: fix isVisible (TypeError: Failed to execute 'getComputedStyle')
