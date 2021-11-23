@@ -166,11 +166,14 @@ function isInputElementActive(doc) {
     return true;
   if (name.match(/-/)) // Web Components
     return true;
-  return (upMatch(element, function(el) {
-      if (!el.getAttribute || el.getAttribute('contenteditable') == 'false')
-        return null;
-      return el.getAttribute('contenteditable'); 
-    }))
+  if (
+    element.contentEditable &&
+    element.contentEditable != "inherit" &&
+    element.contentEditable != "false"
+  ) {
+    return true;
+  }
+  return null;
 }
 
 function selectOnchange(select) {
