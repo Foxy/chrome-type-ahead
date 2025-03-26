@@ -285,7 +285,7 @@ function processSearch(search, options) {
   }
   
   var matchedElements = new Array();
-  var string = escape_regexp(search.text).replace(/\s+/g, "(\\s|\240)+");
+  var string = escape_regexp(search.text).replace(/\s+/g, "(\\s|\xa0)+");
   if (options.starts_link_only)
     string = '^' + string;
   // If string is lower case, search will be case-unsenstive.
