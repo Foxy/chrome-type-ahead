@@ -1,7 +1,7 @@
-chrome.extension.onRequest.addListener(
-  function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.get_options) {
-      chrome.storage.sync.get(null, sendResponse);
+      chrome.storage.sync.get(null).then(sendResponse);
+      return true;
     } else {
       sendResponse({});
     }
