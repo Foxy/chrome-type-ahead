@@ -623,8 +623,8 @@ function main(options) {
 setAlternativeActiveDocument(document);
 options = default_options;
 
-if (typeof(chrome) == "object" && chrome.extension) {
-  chrome.extension.sendRequest({'get_options': true}, function(response) {
+if (typeof(chrome) == "object" && chrome.runtime) {
+  chrome.runtime.sendMessage({ get_options: true }, function(response) {
     options = {
       direct_search_mode: response.direct_search_mode,
       sites_blacklist: response.sites_blacklist,
@@ -636,6 +636,4 @@ if (typeof(chrome) == "object" && chrome.extension) {
     };
     main(options);
   });
-} else {  
-  main(options);
 }
